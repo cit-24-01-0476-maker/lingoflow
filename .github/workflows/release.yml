@@ -30,13 +30,23 @@ jobs:
           cache: true
 
       - name: Recreate Android Project Template
-        run: flutter create --org com.lingoflow --platforms android .
+        run: |
+          mkdir -p temp_app
+          cd temp_app
+          flutter create --org com.lingoflow --project-name lingoflow .
+          cp -r android/gradle ../android/
+          cp android/gradlew ../android/
+          cp android/gradlew.bat ../android/
+          cp android/settings.gradle ../android/
+          cp android/build.gradle ../android/
+          cd ..
+          rm -rf temp_app
 
       - name: Install Dependencies
         run: flutter pub get
 
       - name: Build APK Release
-        run: flutter build apk --release --verbose
+        run: flutter build apk --release
 
       - name: Rename APK
         run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/lingoflow-latest.apk
