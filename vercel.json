@@ -1,14 +1,22 @@
-﻿{
+{
   "cleanUrls": true,
-  "rewrites": [
-    { "source": "/version.json", "destination": "/docs/version.json" },
-    { "source": "/(.*)", "destination": "/docs/$1" }
-  ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Access-Control-Allow-Origin", "value": "*" }
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
+      "source": "/version.json",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
       ]
     }
   ]
