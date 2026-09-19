@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/models.dart';
@@ -357,6 +357,85 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
 
+            const SizedBox(height: 20),
+
+            // Assistive Touch Floating Bubble Card
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceDark,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: settings.isFloatingBubbleEnabled ? AppColors.primaryAccent : AppColors.cardDarkBorder,
+                  width: 1.2,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryBlue.withOpacity(0.2),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.touch_app_rounded, color: AppColors.primaryAccent, size: 22),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'WhatsApp Floating Bubble',
+                              style: TextStyle(
+                                color: AppColors.textPrimaryDark,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              settings.isFloatingBubbleEnabled
+                                  ? 'Active over WhatsApp (Target: ${settings.targetLanguage.toUpperCase()})'
+                                  : 'Tap to show assistive bubble over WhatsApp chats',
+                              style: const TextStyle(color: AppColors.textMutedDark, fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Switch(
+                        value: settings.isFloatingBubbleEnabled,
+                        activeColor: AppColors.primaryAccent,
+                        onChanged: (val) => settingsNotifier.toggleFloatingBubble(val),
+                      ),
+                    ],
+                  ),
+                  if (settings.isFloatingBubbleEnabled) ...[
+                    const SizedBox(height: 12),
+                    const Divider(color: AppColors.cardDarkBorder, height: 1),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Text(
+                          'Target:',
+                          style: TextStyle(color: AppColors.textMutedDark, fontSize: 12, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 8),
+                        _buildLangChip('සිංහල', 'sinhala', settings.targetLanguage, () => settingsNotifier.setTargetLanguage('sinhala')),
+                        const SizedBox(width: 6),
+                        _buildLangChip('English', 'english', settings.targetLanguage, () => settingsNotifier.setTargetLanguage('english')),
+                        const SizedBox(width: 6),
+                        _buildLangChip('Dual', 'dual', settings.targetLanguage, () => settingsNotifier.setTargetLanguage('dual')),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+
             const SizedBox(height: 24),
 
             // Stats Row
@@ -456,6 +535,32 @@ class HomeScreen extends ConsumerWidget {
             color: isSelected ? Colors.white : AppColors.textSecondaryDark,
             fontSize: 13,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLangChip(String label, String value, String current, VoidCallback onTap) {
+    final isSelected = value == current;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primaryAccent.withOpacity(0.2) : AppColors.cardDark,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? AppColors.primaryAccent : AppColors.cardDarkBorder,
+            width: 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? AppColors.primaryAccent : AppColors.textSecondaryDark,
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
         ),
       ),

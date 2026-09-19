@@ -73,6 +73,68 @@ class SettingsScreen extends ConsumerWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         children: [
+          _buildSectionHeader('Assistive Touch & In-Chat Overlay'),
+          _buildCard([
+            ListTile(
+              leading: const CircleAvatar(
+                backgroundColor: AppColors.primaryBlue,
+                radius: 18,
+                child: Icon(Icons.touch_app_rounded, color: Colors.white, size: 20),
+              ),
+              title: const Text(
+                'Floating Bubble / Assistive Touch',
+                style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w600),
+              ),
+              subtitle: const Text(
+                'Show floating bubble over WhatsApp with instant popup translation',
+                style: TextStyle(color: AppColors.textMutedDark, fontSize: 12),
+              ),
+              trailing: Switch(
+                value: settings.isFloatingBubbleEnabled,
+                activeColor: AppColors.primaryAccent,
+                onChanged: (val) async {
+                  await notifier.toggleFloatingBubble(val);
+                  if (val) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Floating Assistive Bubble activated!'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ),
+            const Divider(color: AppColors.cardDarkBorder, height: 1),
+            ListTile(
+              title: const Text('Target Translation Language', style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w600)),
+              subtitle: Text(
+                settings.targetLanguage == 'sinhala'
+                    ? 'සිංහල (Sinhala Only)'
+                    : (settings.targetLanguage == 'english' ? 'English Only' : 'Dual (Sinhala + English)'),
+                style: const TextStyle(color: AppColors.primaryAccent, fontSize: 12),
+              ),
+              trailing: DropdownButton<String>(
+                value: settings.targetLanguage,
+                dropdownColor: AppColors.surfaceDark,
+                underline: const SizedBox.shrink(),
+                style: const TextStyle(color: AppColors.primaryAccent, fontWeight: FontWeight.w600),
+                items: const [
+                  DropdownMenuItem(value: 'sinhala', child: Text('සිංහල (Sinhala)')),
+                  DropdownMenuItem(value: 'english', child: Text('English')),
+                  DropdownMenuItem(value: 'dual', child: Text('Dual (සිංහල + EN)')),
+                ],
+                onChanged: (val) {
+                  if (val != null) {
+                    notifier.setTargetLanguage(val);
+                  }
+                },
+              ),
+            ),
+          ]),
+
+          const SizedBox(height: 24),
+
           _buildSectionHeader('Translation Preferences'),
           _buildCard([
             ListTile(
@@ -190,7 +252,7 @@ class SettingsScreen extends ConsumerWidget {
           _buildCard([
             const ListTile(
               title: Text('Version', style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w600)),
-              trailing: Text('1.0.0 (Production Build)', style: TextStyle(color: AppColors.textMutedDark)),
+              trailing: Text('1.0.1 (Floating Bubble Build)', style: TextStyle(color: AppColors.textMutedDark)),
             ),
             const Divider(color: AppColors.cardDarkBorder, height: 1),
             const ListTile(

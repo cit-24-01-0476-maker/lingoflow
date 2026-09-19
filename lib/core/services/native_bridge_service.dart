@@ -23,6 +23,63 @@ class NativeBridgeService {
     } catch (e) {}
   }
 
+  // Floating Bubble / Assistive Touch overlay methods
+  static Future<bool> isOverlayPermissionGranted() async {
+    try {
+      final bool? granted = await _methodChannel.invokeMethod<bool>('isOverlayPermissionGranted');
+      return granted ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<void> requestOverlayPermission() async {
+    try {
+      await _methodChannel.invokeMethod('requestOverlayPermission');
+    } catch (e) {}
+  }
+
+  static Future<void> startFloatingBubble() async {
+    try {
+      await _methodChannel.invokeMethod('startFloatingBubble');
+    } catch (e) {}
+  }
+
+  static Future<void> stopFloatingBubble() async {
+    try {
+      await _methodChannel.invokeMethod('stopFloatingBubble');
+    } catch (e) {}
+  }
+
+  static Future<bool> isFloatingBubbleRunning() async {
+    try {
+      final bool? running = await _methodChannel.invokeMethod<bool>('isFloatingBubbleRunning');
+      return running ?? false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<void> setFloatingBubbleLanguage(String language) async {
+    try {
+      await _methodChannel.invokeMethod('setFloatingBubbleLanguage', {'language': language});
+    } catch (e) {}
+  }
+
+  static Future<void> showFloatingMessage({
+    required String sender,
+    required String translation,
+    required String original,
+  }) async {
+    try {
+      await _methodChannel.invokeMethod('showFloatingMessage', {
+        'sender': sender,
+        'translation': translation,
+        'original': original,
+      });
+    } catch (e) {}
+  }
+
   static Future<void> showTranslatedNotification({
     required int id,
     required String sender,
@@ -55,7 +112,6 @@ class NativeBridgeService {
     } catch (e) {}
   }
 
-  /// Trigger OTA APK download and silent/system package installer trigger
   static Future<void> downloadAndInstallApk(String apkUrl) async {
     try {
       await _methodChannel.invokeMethod('downloadAndInstallApk', {
@@ -66,7 +122,6 @@ class NativeBridgeService {
     }
   }
 
-  /// Fetch current running app versionCode
   static Future<int> getAppVersionCode() async {
     try {
       final int? code = await _methodChannel.invokeMethod<int>('getAppVersionCode');

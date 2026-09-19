@@ -133,6 +133,8 @@ class UserSettings {
   final bool isDarkMode;
   final String appLanguage; // 'en', 'si'
   final String geminiApiKey;
+  final bool isFloatingBubbleEnabled;
+  final String targetLanguage; // 'sinhala', 'english', 'dual'
 
   const UserSettings({
     this.autoTranslationEnabled = true,
@@ -144,6 +146,8 @@ class UserSettings {
     this.isDarkMode = true,
     this.appLanguage = 'en',
     this.geminiApiKey = '',
+    this.isFloatingBubbleEnabled = false,
+    this.targetLanguage = 'sinhala',
   });
 
   UserSettings copyWith({
@@ -156,6 +160,8 @@ class UserSettings {
     bool? isDarkMode,
     String? appLanguage,
     String? geminiApiKey,
+    bool? isFloatingBubbleEnabled,
+    String? targetLanguage,
   }) {
     return UserSettings(
       autoTranslationEnabled: autoTranslationEnabled ?? this.autoTranslationEnabled,
@@ -167,6 +173,8 @@ class UserSettings {
       isDarkMode: isDarkMode ?? this.isDarkMode,
       appLanguage: appLanguage ?? this.appLanguage,
       geminiApiKey: geminiApiKey ?? this.geminiApiKey,
+      isFloatingBubbleEnabled: isFloatingBubbleEnabled ?? this.isFloatingBubbleEnabled,
+      targetLanguage: targetLanguage ?? this.targetLanguage,
     );
   }
 }

@@ -65,6 +65,7 @@ def main():
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 """
     if "REQUEST_INSTALL_PACKAGES" not in content:
         content = content.replace("<application", permissions + "\n    <application", 1)
@@ -80,6 +81,11 @@ def main():
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
+        <service
+            android:name=".FloatingBubbleService"
+            android:label="LingoFlow Assistive Touch Floating Bubble"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

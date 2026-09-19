@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.NonNull
@@ -33,6 +34,66 @@ class MainActivity : FlutterActivity() {
                 }
                 "openNotificationListenerSettings" -> {
                     openNotificationListenerSettings()
+                    result.success(true)
+                }
+                "isOverlayPermissionGranted" -> {
+                    val granted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        Settings.canDrawOverlays(this)
+                    } else {
+                        true
+                    }
+                    result.success(granted)
+                }
+                "requestOverlayPermission" -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+                        val intent = Intent(
+                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                            Uri.parse("package:$packageName")
+                        ).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        startActivity(intent)
+                    }
+                    result.success(true)
+                }
+                "startFloatingBubble" -> {
+                    val intent = Intent(this, FloatingBubbleService::class.java)
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        startForegroundService(intent)
+                    } else {
+                        startService(intent)
+                    }
+                    result.success(true)
+                }
+                "stopFloatingBubble" -> {
+                    val intent = Intent(this, FloatingBubbleService::class.java)
+                    stopService(intent)
+                    result.success(true)
+                }
+                "isFloatingBubbleRunning" -> {
+                    result.success(FloatingBubbleService.isRunning)
+                }
+                "setFloatingBubbleLanguage" -> {
+                    val lang = call.argument<String>("language") ?: "sinhala"
+                    val intent = Intent(FloatingBubbleService.ACTION_SET_LANGUAGE).apply {
+                        putExtra(FloatingBubbleService.EXTRA_LANGUAGE, lang)
+                        setPackage(packageName)
+                    }
+                    sendBroadcast(intent)
+                    result.success(true)
+                }
+                "showFloatingMessage" -> {
+                    val sender = call.argument<String>("sender") ?: "WhatsApp"
+                    val translation = call.argument<String>("translation") ?: ""
+                    val original = call.argument<String>("original") ?: ""
+
+                    val intent = Intent(FloatingBubbleService.ACTION_SHOW_MESSAGE).apply {
+                        putExtra(FloatingBubbleService.EXTRA_SENDER, sender)
+                        putExtra(FloatingBubbleService.EXTRA_TRANSLATION, translation)
+                        putExtra(FloatingBubbleService.EXTRA_ORIGINAL, original)
+                        setPackage(packageName)
+                    }
+                    sendBroadcast(intent)
                     result.success(true)
                 }
                 "showTranslatedNotification" -> {

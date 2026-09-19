@@ -47,6 +47,24 @@ class SettingsNotifier extends StateNotifier<UserSettings> {
   void setGeminiApiKey(String key) {
     state = state.copyWith(geminiApiKey: key);
   }
+
+  Future<void> toggleFloatingBubble(bool enabled) async {
+    if (enabled) {
+      final hasPerm = await NativeBridgeService.isOverlayPermissionGranted();
+      if (!hasPerm) {
+        await NativeBridgeService.requestOverlayPermission();
+      }
+      await NativeBridgeService.startFloatingBubble();
+    } else {
+      await NativeBridgeService.stopFloatingBubble();
+    }
+    state = state.copyWith(isFloatingBubbleEnabled: enabled);
+  }
+
+  Future<void> setTargetLanguage(String language) async {
+    state = state.copyWith(targetLanguage: language);
+    await NativeBridgeService.setFloatingBubbleLanguage(language);
+  }
 }
 
 // Stats Provider
@@ -57,6 +75,11 @@ final statsProvider = FutureProvider<Map<String, int>>((ref) async {
 // Permission Provider
 final permissionStatusProvider = FutureProvider<bool>((ref) async {
   return await NativeBridgeService.isNotificationListenerEnabled();
+});
+
+// Floating Bubble Permission Provider
+final overlayPermissionProvider = FutureProvider<bool>((ref) async {
+  return await NativeBridgeService.isOverlayPermissionGranted();
 });
 
 // Translation Feed & Pipeline Provider
@@ -78,7 +101,6 @@ class TranslationFeedNotifier extends StateNotifier<List<TranslationMessage>> {
   Future<void> _loadInitialHistory() async {
     final list = await DatabaseService.instance.getAllTranslations(limit: 50);
     if (list.isEmpty) {
-      // Seed with initial high-quality demo data for instant delight
       final seed = [
         TranslationMessage(
           id: const Uuid().v4(),
@@ -135,10 +157,9 @@ class TranslationFeedNotifier extends StateNotifier<List<TranslationMessage>> {
   }) async {
     if (!settings.autoTranslationEnabled) return;
 
-    // Contact preference lookup
     final contactPref = await DatabaseService.instance.getContactPreference(sender);
     if (contactPref != null && !contactPref.translationEnabled) {
-      return; // Contact has translations paused
+      return;
     }
 
     final mode = contactPref?.preferredMode ?? settings.defaultMode;
@@ -177,6 +198,21 @@ class TranslationFeedNotifier extends StateNotifier<List<TranslationMessage>> {
         primaryTranslation: primary,
         originalText: message,
         secondaryTranslation: secondary,
+      );
+    }
+
+    // Trigger Floating Bubble / Assistive Touch overlay if enabled
+    if (settings.isFloatingBubbleEnabled) {
+      final floatingTranslation = settings.targetLanguage == 'english'
+          ? (item.translatedEnglish.isNotEmpty ? item.translatedEnglish : item.translatedSinhala)
+          : (settings.targetLanguage == 'dual'
+              ? '${item.translatedSinhala}\n(${item.translatedEnglish})'
+              : (item.translatedSinhala.isNotEmpty ? item.translatedSinhala : item.translatedEnglish));
+
+      await NativeBridgeService.showFloatingMessage(
+        sender: sender,
+        translation: floatingTranslation,
+        original: message,
       );
     }
   }
