@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.Settings
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -20,7 +21,7 @@ object ApkInstallerHelper {
             // Check Android 8.0+ unknown sources install permission
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 if (!context.packageManager.canRequestPackageInstalls()) {
-                    val intent = Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES_SETTINGS).apply {
+                    val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES_SETTINGS).apply {
                         data = Uri.parse("package:${context.packageName}")
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }
