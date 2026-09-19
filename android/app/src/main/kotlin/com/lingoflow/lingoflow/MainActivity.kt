@@ -123,11 +123,7 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun openNotificationListenerSettings() {
-        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
-        } else {
-            Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
-        }
+        val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
         startActivity(intent)
     }
 
