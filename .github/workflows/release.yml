@@ -29,18 +29,28 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Recreate Android Project Template
+      - name: Repair and Prepare Android Project
         run: |
-          mkdir -p temp_app
-          cd temp_app
-          flutter create --org com.lingoflow --project-name lingoflow .
-          cp -r android/gradle ../android/
-          cp android/gradlew ../android/
-          cp android/gradlew.bat ../android/
-          cp android/settings.gradle ../android/
-          cp android/build.gradle ../android/
-          cd ..
-          rm -rf temp_app
+          # Backup our custom native kotlin files and manifest
+          mkdir -p /tmp/lingo_backup
+          cp -r android/app/src /tmp/lingo_backup/
+          
+          # Delete custom partial android folder and let official Flutter generate standard clean structure
+          rm -rf android
+          flutter create --org com.lingoflow --project-name lingoflow --platforms android .
+          
+          # Restore our custom NotificationListenerService, MainActivity, and Manifest
+          cp -rf /tmp/lingo_backup/src/* android/app/src/
+          
+          # Ensure FileProvider XML exists for OTA auto-update
+          mkdir -p android/app/src/main/res/xml
+          cat << 'EOF' > android/app/src/main/res/xml/file_paths.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <paths xmlns:android="http://schemas.android.com/apk/res/android">
+              <external-files-path name="my_downloads" path="Download" />
+              <external-path name="external_files" path="." />
+          </paths>
+          EOF
 
       - name: Install Dependencies
         run: flutter pub get
