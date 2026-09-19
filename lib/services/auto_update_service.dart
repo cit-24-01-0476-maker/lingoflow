@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../core/services/native_bridge_service.dart';
 
@@ -36,7 +36,7 @@ class AppUpdateInfo {
 
 class AutoUpdateService {
   // Replace with your actual GitHub Raw or Firebase/Vercel URL for version.json
-  static const String updateCheckUrl = 'https://raw.githubusercontent.com/YOUR_USERNAME/lingoflow/main/web/version.json';
+  static const String updateCheckUrl = 'https://raw.githubusercontent.com/cit-24-01-0476-maker/lingoflow/main/web/version.json';
 
   /// Checks if a newer version is available on the web server
   static Future<AppUpdateInfo?> checkForUpdate({String? customUrl}) async {
