@@ -41,7 +41,18 @@ jobs:
         run: flutter pub get
 
       - name: Build APK Release
-        run: flutter build apk --release
+        run: |
+          set +e
+          flutter build apk --release -v > build_output.log 2>&1
+          BUILD_STATUS=$?
+          if [ $BUILD_STATUS -ne 0 ]; then
+            echo "==================== BUILD FAILED - FULL ERROR TAIL ===================="
+            tail -n 250 build_output.log
+            echo "==================== SEARCHING FOR FATAL/ERROR IN LOG ===================="
+            grep -inE "(error:|fatal|exception|failure)" build_output.log | head -n 40
+            exit $BUILD_STATUS
+          fi
+          echo "Build succeeded!"
 
       - name: Prepare Release Artifacts
         run: |
