@@ -1,4 +1,4 @@
-﻿package com.lingoflow.app
+﻿package com.lingoflow.lingoflow
 
 import android.annotation.SuppressLint
 import android.app.DownloadManager
@@ -9,7 +9,6 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -61,7 +60,11 @@ object ApkInstallerHelper {
             }
 
             val filter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-            ContextCompat.registerReceiver(context, onComplete, filter, ContextCompat.RECEIVER_EXPORTED)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                context.registerReceiver(onComplete, filter, Context.RECEIVER_EXPORTED)
+            } else {
+                context.registerReceiver(onComplete, filter)
+            }
 
         } catch (e: Exception) {
             e.printStackTrace()

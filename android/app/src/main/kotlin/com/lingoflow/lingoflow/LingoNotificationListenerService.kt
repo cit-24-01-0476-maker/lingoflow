@@ -1,4 +1,4 @@
-﻿package com.lingoflow.app
+﻿package com.lingoflow.lingoflow
 
 import android.app.Notification
 import android.content.Intent
@@ -46,18 +46,15 @@ class LingoNotificationListenerService : NotificationListenerService() {
         val notification = sbn.notification ?: return
         val extras: Bundle = notification.extras ?: return
 
-        // Extract title (usually sender or group name) and message body
         val title = extras.getCharSequence(Notification.EXTRA_TITLE)?.toString() ?: ""
         val text = extras.getCharSequence(Notification.EXTRA_TEXT)?.toString() ?: ""
         val bigText = extras.getCharSequence(Notification.EXTRA_BIG_TEXT)?.toString()
 
         val finalMessage = if (!bigText.isNullOrBlank()) bigText else text
 
-        // Filter out empty messages, system status messages, or summary notifications
         if (title.isBlank() || finalMessage.isBlank()) return
         if (finalMessage.contains("messages from") || finalMessage.contains("new messages")) return
 
-        // Prevent duplicate notifications fired repeatedly by WhatsApp sync
         val messageKey = "$packageName|$title|$finalMessage"
         val hash = sha256(messageKey)
         val now = System.currentTimeMillis()
@@ -76,7 +73,6 @@ class LingoNotificationListenerService : NotificationListenerService() {
 
         Log.d(TAG, "Valid WhatsApp notification detected from '$title': $finalMessage")
 
-        // Broadcast to Flutter MainActivity or EventChannel
         val intent = Intent(ACTION_WHATSAPP_NOTIFICATION).apply {
             putExtra(EXTRA_PACKAGE, packageName)
             putExtra(EXTRA_SENDER, title)

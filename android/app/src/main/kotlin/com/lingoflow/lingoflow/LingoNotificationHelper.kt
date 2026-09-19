@@ -1,14 +1,13 @@
-﻿package com.lingoflow.app
+﻿package com.lingoflow.lingoflow
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 
 object LingoNotificationHelper {
     const val CHANNEL_ID = "lingoflow_translated_messages"
@@ -57,17 +56,27 @@ object LingoNotificationHelper {
             append("💬 Original: $originalText")
         }
 
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info)
+        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification.Builder(context, CHANNEL_ID)
+        } else {
+            @Suppress("DEPRECATION")
+            Notification.Builder(context)
+        }
+
+        builder.setSmallIcon(android.R.drawable.ic_dialog_info)
             .setContentTitle("LingoFlow: $senderName")
             .setContentText(primaryTranslation)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(bigTextContent))
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setStyle(Notification.BigTextStyle().bigText(bigTextContent))
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            builder.setPriority(Notification.PRIORITY_HIGH)
+        }
+
         try {
-            NotificationManagerCompat.from(context).notify(notificationId, builder.build())
+            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            nm.notify(notificationId, builder.build())
         } catch (e: Exception) {
             e.printStackTrace()
         }
