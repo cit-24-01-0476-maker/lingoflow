@@ -22,9 +22,8 @@ object LingoNotificationHelper {
                 enableLights(true)
                 enableVibration(true)
             }
-            val notificationManager: NotificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
+            val nm = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            nm.createNotificationChannel(channel)
         }
     }
 
@@ -38,7 +37,6 @@ object LingoNotificationHelper {
     ) {
         createNotificationChannel(context)
 
-        // Intent to launch the application
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)?.apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
@@ -66,11 +64,9 @@ object LingoNotificationHelper {
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
 
-        val notificationManager = NotificationManagerCompat.from(context)
         try {
-            notificationManager.notify(notificationId, builder.build())
+            NotificationManagerCompat.from(context).notify(notificationId, builder.build())
         } catch (e: SecurityException) {
-            // Missing POST_NOTIFICATIONS runtime permission on Android 13+
             e.printStackTrace()
         }
     }

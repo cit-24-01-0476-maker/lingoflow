@@ -1,6 +1,5 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:intl/intl.dart';
 import '../models/models.dart';
 import '../core/theme/app_theme.dart';
@@ -32,6 +31,21 @@ class TranslationCard extends StatelessWidget {
     }
   }
 
+  void _copyToClipboard(BuildContext context) {
+    final textToCopy = [
+      'Original: ${message.originalText}',
+      if (message.translatedSinhala.isNotEmpty) 'Sinhala: ${message.translatedSinhala}',
+      if (message.translatedEnglish.isNotEmpty) 'English: ${message.translatedEnglish}',
+    ].join('\n');
+    Clipboard.setData(ClipboardData(text: textToCopy));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Translation copied to clipboard'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final timeStr = DateFormat('hh:mm a').format(message.timestamp);
@@ -55,7 +69,6 @@ class TranslationCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Row: Avatar, Sender, App Tag, Time
             Row(
               children: [
                 CircleAvatar(
@@ -117,7 +130,6 @@ class TranslationCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Language badge
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
@@ -142,7 +154,6 @@ class TranslationCard extends StatelessWidget {
 
             const SizedBox(height: 14),
 
-            // Original Message
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
@@ -177,7 +188,6 @@ class TranslationCard extends StatelessWidget {
 
             const SizedBox(height: 12),
 
-            // Sinhala Translation
             if (message.translatedSinhala.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
@@ -215,7 +225,6 @@ class TranslationCard extends StatelessWidget {
                 ),
               ),
 
-            // English Translation
             if (message.translatedEnglish.isNotEmpty)
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,32 +263,18 @@ class TranslationCard extends StatelessWidget {
             const Divider(color: AppColors.cardDarkBorder, height: 1),
             const SizedBox(height: 8),
 
-            // Actions: Copy, Share, Favorite, Delete
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
                   tooltip: 'Copy Translation',
                   icon: const Icon(Icons.copy_rounded, size: 18, color: AppColors.textSecondaryDark),
-                  onPressed: () {
-                    final textToCopy = '${message.translatedSinhala}\n${message.translatedEnglish}';
-                    Clipboard.setData(ClipboardData(text: textToCopy));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Translation copied to clipboard'),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
-                  },
+                  onPressed: () => _copyToClipboard(context),
                 ),
                 IconButton(
                   tooltip: 'Share',
                   icon: const Icon(Icons.share_rounded, size: 18, color: AppColors.textSecondaryDark),
-                  onPressed: () {
-                    Share.share(
-                      'Original: ${message.originalText}\nSinhala: ${message.translatedSinhala}\nEnglish: ${message.translatedEnglish}',
-                    );
-                  },
+                  onPressed: () => _copyToClipboard(context),
                 ),
                 IconButton(
                   tooltip: 'Favorite',

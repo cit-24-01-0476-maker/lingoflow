@@ -35,25 +35,17 @@ jobs:
           cp -r android/app/src /tmp/lingo_backup/
           rm -rf android
           flutter create --org com.lingoflow --project-name lingoflow --platforms android .
-          
-          # Restore our custom native Kotlin files
-          cp -rf /tmp/lingo_backup/src/main/kotlin/com/lingoflow/app/* android/app/src/main/kotlin/com/lingoflow/lingoflow/ 2>/dev/null || true
           mkdir -p android/app/src/main/kotlin/com/lingoflow/app
           cp -rf /tmp/lingo_backup/src/main/kotlin/com/lingoflow/app/* android/app/src/main/kotlin/com/lingoflow/app/
-          
-          # Add our permissions and NotificationListenerService to AndroidManifest.xml
-          sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET" />\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />\n    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />\n    <uses-permission android:name="android.permission.VIBRATE" />\n    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />\n    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />' android/app/src/main/AndroidManifest.xml
-          
-          sed -i '/<\/application>/i \        <service android:name=".LingoNotificationListenerService" android:label="LingoFlow WhatsApp Notification Listener" android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" android:exported="true"><intent-filter><action android:name="android.service.notification.NotificationListenerService" /></intent-filter></service>\n        <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.fileprovider" android:exported="false" android:grantUriPermissions="true"><meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" /></provider>' android/app/src/main/AndroidManifest.xml
-
+          cp /tmp/lingo_backup/src/main/AndroidManifest.xml android/app/src/main/AndroidManifest.xml
           mkdir -p android/app/src/main/res/xml
-          cat << 'EOF' > android/app/src/main/res/xml/file_paths.xml
+          cat > android/app/src/main/res/xml/file_paths.xml << 'XMLEOF'
           <?xml version="1.0" encoding="utf-8"?>
           <paths xmlns:android="http://schemas.android.com/apk/res/android">
               <external-files-path name="my_downloads" path="Download" />
               <external-path name="external_files" path="." />
           </paths>
-          EOF
+          XMLEOF
 
       - name: Install Dependencies
         run: flutter pub get
