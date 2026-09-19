@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LingoFlow - WhatsApp Message Translator</title>
+  <style>
+    :root {
+      --bg: #0a0f1e;
+      --surface: #131b2e;
+      --card: #1a233a;
+      --border: #243254;
+      --primary: #2563eb;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --whatsapp: #25d366;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 24px 16px; }
+    .container { max-width: 600px; width: 100%; text-align: center; margin-top: 40px; }
+    .logo { width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 0 30px rgba(56, 189, 248, 0.4); font-size: 36px; }
+    h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .tagline { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 28px; text-align: left; margin-bottom: 24px; }
+    .badge { display: inline-block; background: rgba(37, 211, 102, 0.15); color: var(--whatsapp); padding: 4px 10px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; margin-bottom: 12px; }
+    .version-info { font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--accent); }
+    .notes-title { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    ul { margin-left: 20px; color: var(--text); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; }
+    .download-btn { display: flex; align-items: center; justify-content: center; width: 100%; background: var(--primary); color: white; text-decoration: none; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 1.1rem; transition: background 0.2s, transform 0.1s; gap: 10px; }
+    .download-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
+    .ota-badge { margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); }
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; text-align: left; }
+    .feature-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .feature-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; color: var(--accent); }
+    .feature-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">⚡</div>
+    <h1>LingoFlow</h1>
+    <p class="tagline">Automatic WhatsApp Notification Translator</p>
+
+    <div class="card">
+      <span class="badge">LATEST RELEASE</span>
+      <div class="version-info" id="versionText">Version 1.0.1 (Build 2)</div>
+      <div class="notes-title">What's New:</div>
+      <ul id="releaseNotes">
+        <li>Automatic In-App APK Updates (OTA)</li>
+        <li>Singlish to Sinhala & English instant translation</li>
+        <li>WhatsApp Notification Listener integration</li>
+        <li>Battery & Privacy optimized on-device engine</li>
+      </ul>
+
+      <a href="lingoflow-latest.apk" class="download-btn" id="downloadBtn">
+        <span>⬇️</span> Download APK (Direct Install)
+      </a>
+
+      <div class="ota-badge">
+        <span>🔄</span> Auto-Updates directly inside the app once installed
+      </div>
+    </div>
+
+    <div class="feature-grid">
+      <div class="feature-box">
+        <div class="feature-title">No WhatsApp Bans</div>
+        <div class="feature-desc">Uses official Android Notification Access APIs. 100% compliant.</div>
+      </div>
+      <div class="feature-box">
+        <div class="feature-title">100% Private</div>
+        <div class="feature-desc">Translations are processed on your phone. No cloud chat saving.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    fetch('version.json')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('versionText').textContent = 'Version ' + data.version_name + ' (Build ' + data.version_code + ')';
+        document.getElementById('downloadBtn').href = data.apk_url;
+        if (data.release_notes && data.release_notes.length) {
+          const ul = document.getElementById('releaseNotes');
+          ul.innerHTML = '';
+          data.release_notes.forEach(note => {
+            const li = document.createElement('li');
+            li.textContent = note;
+            ul.appendChild(li);
+          });
+        }
+      })
+      .catch(() => {});
+  </script>
+</body>
+</html>
