@@ -1,5 +1,6 @@
 ﻿package com.lingoflow.app
 
+import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -8,11 +9,13 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import java.io.File
 
 object ApkInstallerHelper {
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     fun downloadAndInstallApk(context: Context, apkUrl: String, fileName: String = "lingoflow_update.apk") {
         try {
             // Check Android 8.0+ unknown sources install permission
@@ -58,11 +61,7 @@ object ApkInstallerHelper {
             }
 
             val filter = IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                context.registerReceiver(onComplete, filter, Context.RECEIVER_EXPORTED)
-            } else {
-                context.registerReceiver(onComplete, filter)
-            }
+            ContextCompat.registerReceiver(context, onComplete, filter, ContextCompat.RECEIVER_EXPORTED)
 
         } catch (e: Exception) {
             e.printStackTrace()

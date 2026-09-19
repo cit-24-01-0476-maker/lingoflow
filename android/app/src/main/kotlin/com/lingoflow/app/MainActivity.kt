@@ -1,5 +1,6 @@
 ﻿package com.lingoflow.app
 
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
@@ -8,6 +9,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.provider.Settings
 import androidx.annotation.NonNull
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
@@ -130,6 +132,7 @@ class MainActivity : FlutterActivity() {
         startActivity(intent)
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private fun registerNotificationReceiver() {
         if (notificationReceiver == null) {
             notificationReceiver = object : BroadcastReceiver() {
@@ -151,11 +154,7 @@ class MainActivity : FlutterActivity() {
                 }
             }
             val filter = IntentFilter(LingoNotificationListenerService.ACTION_WHATSAPP_NOTIFICATION)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                registerReceiver(notificationReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-            } else {
-                registerReceiver(notificationReceiver, filter)
-            }
+            ContextCompat.registerReceiver(this, notificationReceiver, filter, ContextCompat.RECEIVER_NOT_EXPORTED)
         }
     }
 

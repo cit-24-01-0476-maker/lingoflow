@@ -17,6 +17,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -29,69 +34,8 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Backup Native Android Files
-        run: |
-          mkdir -p /tmp/lingo_kotlin
-          cp -r android/app/src/main/kotlin /tmp/lingo_kotlin/
-          cp android/app/src/main/AndroidManifest.xml /tmp/lingo_manifest.xml
-          cp -r android/app/src/main/res /tmp/lingo_res
-
-      - name: Rebuild Android Scaffold
-        run: |
-          rm -rf android
-          flutter create --org com.lingoflow --project-name lingoflow --platforms android .
-
-      - name: Restore Custom Kotlin + Manifest
-        run: |
-          mkdir -p android/app/src/main/kotlin/com/lingoflow/app
-          cp -r /tmp/lingo_kotlin/kotlin/com/lingoflow/app/* android/app/src/main/kotlin/com/lingoflow/app/
-          cp /tmp/lingo_manifest.xml android/app/src/main/AndroidManifest.xml
-          mkdir -p android/app/src/main/res/xml
-          cp /tmp/lingo_res/xml/file_paths.xml android/app/src/main/res/xml/file_paths.xml || true
-
-      - name: Patch build.gradle - namespace + minSdk
-        run: |
-          # Ensure namespace is set (replaces flutter-created file with our own)
-          cat > android/app/build.gradle << 'GRADLE_EOF'
-          plugins {
-              id "com.android.application"
-              id "kotlin-android"
-              id "dev.flutter.flutter-gradle-plugin"
-          }
-
-          android {
-              namespace "com.lingoflow.app"
-              compileSdk = flutter.compileSdkVersion
-              ndkVersion = flutter.ndkVersion
-
-              compileOptions {
-                  sourceCompatibility = JavaVersion.VERSION_11
-                  targetCompatibility = JavaVersion.VERSION_11
-              }
-
-              kotlinOptions {
-                  jvmTarget = JavaVersion.VERSION_11
-              }
-
-              defaultConfig {
-                  applicationId = "com.lingoflow.app"
-                  minSdk = 23
-                  targetSdk = flutter.targetSdkVersion
-                  versionCode = flutter.versionCode
-                  versionName = flutter.versionName
-              }
-
-              buildTypes {
-                  release {
-                      signingConfig = signingConfigs.debug
-                  }
-              }
-          }
-
-          flutter {
-              source = "../.."
-          }
-          GRADLE_EOF
+      - name: Repair and Prepare Android Project
+        run: python scripts/prepare_android.py
 
       - name: Install Dependencies
         run: flutter pub get
@@ -99,14 +43,27 @@ jobs:
       - name: Build APK Release
         run: flutter build apk --release
 
-      - name: Rename APK
-        run: cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/lingoflow-latest.apk
+      - name: Prepare Release Artifacts
+        run: |
+          mkdir -p dist
+          cp build/app/outputs/flutter-apk/app-release.apk dist/lingoflow-v1.0.0.apk
+          cp build/app/outputs/flutter-apk/app-release.apk dist/app-release.apk
+          cp build/app/outputs/flutter-apk/app-release.apk dist/lingoflow-latest.apk
+          ls -la dist/
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/flutter-apk/lingoflow-latest.apk
+            dist/lingoflow-v1.0.0.apk
+            dist/app-release.apk
+            dist/lingoflow-latest.apk
+          name: "LingoFlow v1.0.0 Release"
+          body: |
+            ## LingoFlow - WhatsApp Message Translator v1.0.0
+            - 🚀 Instant Singlish to Sinhala & English translation
+            - 🔔 Live WhatsApp Notification Listener
+            - 🔄 In-app automatic updates (OTA)
+            - 🔒 100% Private, on-device processing
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

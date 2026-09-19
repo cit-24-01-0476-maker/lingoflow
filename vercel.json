@@ -1,0 +1,18 @@
+﻿{
+  "version": 2,
+  "public": false,
+  "routes": [
+    {
+      "src": "/version.json",
+      "dest": "/docs/version.json",
+      "headers": {
+        "cache-control": "no-cache, no-store, must-revalidate",
+        "access-control-allow-origin": "*"
+      }
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/docs/$1"
+    }
+  ]
+}

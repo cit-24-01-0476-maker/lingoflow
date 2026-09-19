@@ -1,5 +1,6 @@
 ﻿package com.lingoflow.app
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -27,6 +28,7 @@ object LingoNotificationHelper {
         }
     }
 
+    @SuppressLint("MissingPermission")
     fun showTranslatedNotification(
         context: Context,
         notificationId: Int,
@@ -66,7 +68,7 @@ object LingoNotificationHelper {
 
         try {
             NotificationManagerCompat.from(context).notify(notificationId, builder.build())
-        } catch (e: SecurityException) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
