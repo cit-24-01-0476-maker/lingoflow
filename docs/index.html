@@ -3,91 +3,339 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LingoFlow - WhatsApp Message Translator</title>
+  <title>LingoFlow - WhatsApp Automatic Message Translator</title>
+  <meta name="description" content="Translate WhatsApp notifications instantly between Singlish, Sinhala, and English with zero setup.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0a0f1e;
-      --surface: #131b2e;
-      --card: #1a233a;
-      --border: #243254;
-      --primary: #2563eb;
-      --accent: #38bdf8;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --whatsapp: #25d366;
+      --bg: #070B14;
+      --surface: #0F172A;
+      --card: #141E33;
+      --card-border: #1E293B;
+      --primary: #2563EB;
+      --primary-glow: #38BDF8;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --whatsapp: #25D366;
+      --sinhala-badge: #F59E0B;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 24px 16px; }
-    .container { max-width: 600px; width: 100%; text-align: center; margin-top: 40px; }
-    .logo { width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; box-shadow: 0 0 30px rgba(56, 189, 248, 0.4); font-size: 36px; }
-    h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -0.5px; }
-    .tagline { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 28px; text-align: left; margin-bottom: 24px; }
-    .badge { display: inline-block; background: rgba(37, 211, 102, 0.15); color: var(--whatsapp); padding: 4px 10px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; margin-bottom: 12px; }
-    .version-info { font-size: 1.2rem; font-weight: 700; margin-bottom: 12px; color: var(--accent); }
-    .notes-title { font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
-    ul { margin-left: 20px; color: var(--text); font-size: 0.95rem; line-height: 1.6; margin-bottom: 24px; }
-    .download-btn { display: flex; align-items: center; justify-content: center; width: 100%; background: var(--primary); color: white; text-decoration: none; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 1.1rem; transition: background 0.2s, transform 0.1s; gap: 10px; }
-    .download-btn:hover { background: #1d4ed8; transform: translateY(-2px); }
-    .ota-badge { margin-top: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.85rem; color: var(--text-muted); }
-    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 24px; text-align: left; }
-    .feature-box { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
-    .feature-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; color: var(--accent); }
-    .feature-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 16px 60px;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.12), transparent 400px),
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.15), transparent 400px);
+    }
+
+    .container {
+      max-width: 680px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .nav-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 999px;
+      color: var(--primary-glow);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .logo-container {
+      width: 90px;
+      height: 90px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-glow));
+      border-radius: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 12px 35px rgba(37, 99, 235, 0.45);
+      font-size: 42px;
+    }
+
+    h1 {
+      font-size: 2.75rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 12px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #CBD5E1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .tagline {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    /* Main Download Card */
+    .download-card {
+      background: var(--surface);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 32px 28px;
+      text-align: left;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      position: relative;
+      margin-bottom: 32px;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .release-tag {
+      background: rgba(37, 211, 102, 0.15);
+      color: var(--whatsapp);
+      border: 1px solid rgba(37, 211, 102, 0.3);
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .version-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .download-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary), #1D4ED8);
+      color: white;
+      text-decoration: none;
+      padding: 18px 24px;
+      border-radius: 16px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(37, 99, 235, 0.6);
+      background: linear-gradient(135deg, #1D4ED8, #2563EB);
+    }
+
+    .ota-notice {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+      color: var(--primary-glow);
+      font-size: 0.9rem;
+      font-weight: 500;
+      background: rgba(56, 189, 248, 0.08);
+      padding: 10px 16px;
+      border-radius: 12px;
+    }
+
+    /* Demo Message Bubble */
+    .preview-box {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 18px;
+      margin: 20px 0;
+    }
+
+    .msg-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .msg-original {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+
+    .msg-sinhala {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #38BDF8;
+      margin-bottom: 4px;
+    }
+
+    .msg-english {
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    /* Feature Grid */
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      text-align: left;
+    }
+
+    @media (max-width: 600px) {
+      .features { grid-template-columns: 1fr; }
+      h1 { font-size: 2.2rem; }
+    }
+
+    .feat-card {
+      background: var(--surface);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .feat-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .feat-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .feat-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    footer {
+      margin-top: 50px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="logo">⚡</div>
+    <div class="nav-badge">
+      <span>⚡</span> Built for Sri Lanka • Official Android APIs
+    </div>
+
+    <div class="logo-container">🔤</div>
     <h1>LingoFlow</h1>
-    <p class="tagline">Automatic WhatsApp Notification Translator</p>
+    <p class="tagline">Automatic WhatsApp notification translator for Singlish, Sinhala, and English.</p>
 
-    <div class="card">
-      <span class="badge">LATEST RELEASE</span>
-      <div class="version-info" id="versionText">Version 1.0.1 (Build 2)</div>
-      <div class="notes-title">What's New:</div>
-      <ul id="releaseNotes">
-        <li>Automatic In-App APK Updates (OTA)</li>
-        <li>Singlish to Sinhala & English instant translation</li>
-        <li>WhatsApp Notification Listener integration</li>
-        <li>Battery & Privacy optimized on-device engine</li>
-      </ul>
+    <!-- Download Card -->
+    <div class="download-card">
+      <div class="card-header">
+        <div class="version-title" id="versionText">LingoFlow Latest (v1.0.0)</div>
+        <div class="release-tag">STABLE APK</div>
+      </div>
 
-      <a href="lingoflow-latest.apk" class="download-btn" id="downloadBtn">
-        <span>⬇️</span> Download APK (Direct Install)
+      <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 16px;">
+        Translate WhatsApp messages instantly from your notification drawer without opening WhatsApp or typing anything.
+      </p>
+
+      <!-- Live Preview of what the app does -->
+      <div class="preview-box">
+        <div class="msg-badge">Instant Translation Demo</div>
+        <div class="msg-original">Original: "mama ada class ekata enne na"</div>
+        <div class="msg-sinhala">සිංහල: "මම අද class එකට එන්නේ නැහැ."</div>
+        <div class="msg-english">English: "I am not coming to class today."</div>
+      </div>
+
+      <!-- Main Direct Download Button -->
+      <a href="https://github.com/cit-24-01-0476-maker/lingoflow/releases/latest/download/app-release.apk" class="download-btn" id="downloadBtn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        <span>Download APK (Direct Install)</span>
       </a>
 
-      <div class="ota-badge">
-        <span>🔄</span> Auto-Updates directly inside the app once installed
+      <!-- In-app Auto-update highlight -->
+      <div class="ota-notice">
+        <span>🔄</span>
+        <span><b>Automatic In-App Updates:</b> Once installed, future updates install automatically!</span>
       </div>
     </div>
 
-    <div class="feature-grid">
-      <div class="feature-box">
-        <div class="feature-title">No WhatsApp Bans</div>
-        <div class="feature-desc">Uses official Android Notification Access APIs. 100% compliant.</div>
+    <!-- Feature Grid -->
+    <div class="features">
+      <div class="feat-card">
+        <div class="feat-icon">🚀</div>
+        <div class="feat-title">Auto-Update Enabled</div>
+        <div class="feat-desc">You never have to re-download manually. When a new update is released, the app upgrades itself seamlessly.</div>
       </div>
-      <div class="feature-box">
-        <div class="feature-title">100% Private</div>
-        <div class="feature-desc">Translations are processed on your phone. No cloud chat saving.</div>
+
+      <div class="feat-card">
+        <div class="feat-icon">🛡️</div>
+        <div class="feat-title">100% WhatsApp Safe</div>
+        <div class="feat-desc">Uses official Android Notification Access permissions. Zero ban risk. No passwords or chat scraping.</div>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">Offline Singlish Engine</div>
+        <div class="feat-desc">Instant (<15ms) transliteration for daily colloquial terms (mama, oya, ada, heta, puluwanda, etc).</div>
+      </div>
+
+      <div class="feat-card">
+        <div class="feat-icon">🔒</div>
+        <div class="feat-title">Strict Local Privacy</div>
+        <div class="feat-desc">Your messages stay on your device. Auto-purge history whenever you want with one tap.</div>
       </div>
     </div>
+
+    <footer>
+      LingoFlow © 2026 • Private, Fast & Automatic
+    </footer>
   </div>
 
   <script>
+    // Fetch live version information if hosted on GitHub Pages
     fetch('version.json')
       .then(res => res.json())
       .then(data => {
-        document.getElementById('versionText').textContent = 'Version ' + data.version_name + ' (Build ' + data.version_code + ')';
-        document.getElementById('downloadBtn').href = data.apk_url;
-        if (data.release_notes && data.release_notes.length) {
-          const ul = document.getElementById('releaseNotes');
-          ul.innerHTML = '';
-          data.release_notes.forEach(note => {
-            const li = document.createElement('li');
-            li.textContent = note;
-            ul.appendChild(li);
-          });
+        if (data.version_name) {
+          document.getElementById('versionText').textContent = 'LingoFlow v' + data.version_name + ' (Build ' + data.version_code + ')';
+        }
+        if (data.apk_url) {
+          document.getElementById('downloadBtn').href = data.apk_url;
         }
       })
       .catch(() => {});

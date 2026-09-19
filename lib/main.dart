@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'screens/splash/splash_screen.dart';
 import 'services/translation_service.dart';
+import 'widgets/auto_update_listener.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Modern transparent status bar for futuristic edge-to-edge styling
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -38,7 +38,9 @@ class LingoFlowApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: settings.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const SplashScreen(),
+      home: const AutoUpdateListener(
+        child: SplashScreen(),
+      ),
     );
   }
 }
