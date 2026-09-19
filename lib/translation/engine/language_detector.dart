@@ -1,4 +1,4 @@
-﻿import '../models/models.dart';
+﻿import '../../models/models.dart';
 
 class LanguageDetector {
   // Regex for Sinhala Unicode block: U+0D80 to U+0DFF
@@ -71,7 +71,6 @@ class LanguageDetector {
 
     final int totalRecognized = singlishHits + englishHits;
     if (totalRecognized == 0) {
-      // Default to Singlish heuristic for informal chat style, otherwise English
       return _looksLikeSinglishPhonetics(trimmed)
           ? LanguageDetectionResult(LanguageType.singlish, 0.6)
           : LanguageDetectionResult(LanguageType.english, 0.6);
@@ -91,7 +90,6 @@ class LanguageDetector {
   }
 
   static bool _isSinglishMorphology(String word) {
-    // Suffixes typical in Singlish: -da (question), -la (plural), -ta (dative), -wa, -ge
     if (word.endsWith('da') || word.endsWith('thiyenawa') || word.endsWith('nawa') ||
         word.endsWith('anna') || word.endsWith('enne') || word.endsWith('ekata') ||
         word.endsWith('eken') || word.endsWith('thama') || word.endsWith('thami')) {

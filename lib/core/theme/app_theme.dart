@@ -8,8 +8,8 @@ class AppColors {
   static const Color cardDarkBorder = Color(0xFF243254);
 
   // Primary & Accents
-  static const Color primaryBlue = Color(0xFF2563EB); // Vibrant Royal Blue
-  static const Color primaryAccent = Color(0xFF38BDF8); // Electric Sky Blue
+  static const Color primaryBlue = Color(0xFF2563EB);
+  static const Color primaryAccent = Color(0xFF38BDF8);
   static const Color accentCyan = Color(0xFF06B6D4);
   static const Color accentGreen = Color(0xFF10B981);
   static const Color accentOrange = Color(0xFFF59E0B);
@@ -57,7 +57,7 @@ class AppTheme {
           fontWeight: FontWeight.w700,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.cardDark,
         elevation: 0,
         shape: RoundedRectangleBorder(
@@ -97,7 +97,7 @@ class AppTheme {
           fontWeight: FontWeight.w700,
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.cardLight,
         elevation: 0,
         shape: RoundedRectangleBorder(

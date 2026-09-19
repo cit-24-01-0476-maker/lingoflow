@@ -62,7 +62,8 @@ Do not include markdown or formatting, only valid raw JSON.
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      final rawOutput = data['candidates']?[0]?['content']?[parts]?[0]?['text'] ?? '{}';
+      final candidates = data['candidates'] as List<dynamic>?;
+      final rawOutput = candidates?[0]?['content']?['parts']?[0]?['text'] ?? '{}';
       final cleanJson = rawOutput.replaceAll('```json', '').replaceAll('```', '').trim();
       final parsed = jsonDecode(cleanJson);
 
