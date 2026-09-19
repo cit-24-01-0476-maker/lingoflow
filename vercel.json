@@ -1,18 +1,15 @@
 ﻿{
-  "version": 2,
-  "public": false,
-  "routes": [
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/version.json", "destination": "/docs/version.json" },
+    { "source": "/(.*)", "destination": "/docs/$1" }
+  ],
+  "headers": [
     {
-      "src": "/version.json",
-      "dest": "/docs/version.json",
-      "headers": {
-        "cache-control": "no-cache, no-store, must-revalidate",
-        "access-control-allow-origin": "*"
-      }
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/docs/$1"
+      "source": "/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
     }
   ]
 }
