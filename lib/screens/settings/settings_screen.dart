@@ -308,7 +308,7 @@ class SettingsScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: AppColors.primaryBlue.withOpacity(0.4)),
                 ),
-                child: const Text('v1.0.3', style: TextStyle(color: AppColors.primaryAccent, fontWeight: FontWeight.bold, fontSize: 12)),
+                child: const Text('v1.0.4', style: TextStyle(color: AppColors.primaryAccent, fontWeight: FontWeight.bold, fontSize: 12)),
               ),
               onTap: () async {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -332,16 +332,16 @@ class SettingsScreen extends ConsumerWidget {
               trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textMutedDark),
               onTap: () {
                 final demoInfo = AppUpdateInfo(
-                  versionCode: 4,
-                  versionName: '1.0.3',
+                  versionCode: 5,
+                  versionName: '1.0.4',
                   apkUrl: 'https://github.com/cit-24-01-0476-maker/lingoflow/releases/latest/download/app-release.apk',
-                  apkSizeMb: 50.6,
+                  apkSizeMb: 51.4,
                   forceUpdate: false,
                   releaseNotes: [
-                    'Rebranded to SinglishGo with 3D Glossy Jelly Icon',
-                    'Added Tamil (தமிழ்) translation support',
-                    'Real-time live progress bar (0% -> 100%)',
-                    'Automatic APK installer launch upon download completion'
+                    'Fixed "App not installed" with permanent release keystore',
+                    'Enhanced APK installer with external storage and explicit URI permissions',
+                    'Automatic instant installation launch right after download completion',
+                    'Added app lifecycle observer to resume installer after granting permission'
                   ],
                 );
                 UpdateDialogHelper.showUpdatePrompt(context, demoInfo);

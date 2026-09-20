@@ -620,7 +620,7 @@ html_content = '''<!DOCTYPE html>
     <div class="download-card">
       <div class="card-top">
         <div class="version-tag">
-          <span id="versionText">SinglishGo v1.0.3</span>
+          <span id="versionText">SinglishGo v1.0.4</span>
           <span class="badge-stable">STABLE RELEASE</span>
         </div>
         <div style="color: var(--text-muted); font-size: 0.88rem;" id="releaseDateText">Released Sep 20, 2026</div>
@@ -633,12 +633,12 @@ html_content = '''<!DOCTYPE html>
       <!-- Main Direct Download Button -->
       <a href="https://github.com/cit-24-01-0476-maker/lingoflow/releases/latest/download/app-release.apk" class="btn-download-primary" id="downloadBtn">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-        <span id="i18n-downloadBtn">Download SinglishGo APK (v1.0.3)</span>
+        <span id="i18n-downloadBtn">Download SinglishGo APK (v1.0.4)</span>
       </a>
 
       <div class="btn-meta">
         <span id="i18n-downloadMeta">Free • Android 8.0+ • Direct Install</span>
-        <span id="fileSizeText">Size: 50.6 MB</span>
+        <span id="fileSizeText">Size: 51.4 MB</span>
       </div>
 
       <!-- Real Live In-App Update Simulation Component -->
@@ -774,7 +774,7 @@ html_content = '''<!DOCTYPE html>
         heroTitle: 'Chat in any language, <span class="gradient-text">effortlessly.</span>',
         heroSubtitle: "Instant real-time translation for WhatsApp notifications in Singlish, Sinhala, English & Tamil. Featuring Assistive Touch Floating Bubble & live in-app updates.",
         downloadDesc: "Translate WhatsApp messages right from notifications and floating bubble without opening WhatsApp or typing anything.",
-        downloadBtn: "Download SinglishGo APK (v1.0.3)",
+        downloadBtn: "Download SinglishGo APK (v1.0.4)",
         downloadMeta: "Free • Android 8.0+ • Direct Install",
         simHeader: "Live In-App Automatic Updater Demo",
         simBtn: "Simulate Update",
@@ -803,7 +803,7 @@ html_content = '''<!DOCTYPE html>
         heroTitle: 'ඕනෑම භාෂාවකින්, <span class="gradient-text">පහසුවෙන්ම කතාබස් කරන්න.</span>',
         heroSubtitle: "WhatsApp පණිවිඩ Singlish, සිංහල, English සහ දෙමළ (Tamil) භාෂාවලට ක්ෂණිකව පරිවර්තනය කරයි. Assistive Touch Floating බබල් එක සහ Live In-App Update පහසුකම සමගින්.",
         downloadDesc: "WhatsApp විවෘත නොකරම notification සහ floating bubble එක මගින් ක්ෂණික සිංහල, ඉංග්‍රීසි හා දෙමළ පරිවර්තන ලබාගන්න.",
-        downloadBtn: "SinglishGo APK නොමිලේ බාගන්න (v1.0.3)",
+        downloadBtn: "SinglishGo APK නොමිලේ බාගන්න (v1.0.4)",
         downloadMeta: "නොමිලේ • Android 8.0+ • සෘජු ස්ථාපනය",
         simHeader: "ඇප් එක ඇතුලෙන්ම Live Update ආදර්ශය",
         simBtn: "Update ආදර්ශය බලන්න",
@@ -832,7 +832,7 @@ html_content = '''<!DOCTYPE html>
         heroTitle: 'எந்த மொழியிலும், <span class="gradient-text">எளிதாக உரையாடுங்கள்.</span>',
         heroSubtitle: "WhatsApp அறிவிப்புகளை Singlish, சிங்களம், ஆங்கிலம் மற்றும் தமிழ் மொழிகளுக்கு உடனடியாக மொழிபெயர்க்கிறது. மிதக்கும் உதவி பப்பில் மற்றும் நேரடி இன்-ஆப் அப்டேட் உடன்.",
         downloadDesc: "WhatsApp ஐ திறக்காமலேயே அறிவிப்புப் பட்டி மற்றும் மிதக்கும் பப்பில் மூலம் உடனடி மொழிபெயர்ப்பைப் பெறுங்கள்.",
-        downloadBtn: "SinglishGo APK ஐ பதிவிறக்கவும் (v1.0.3)",
+        downloadBtn: "SinglishGo APK ஐ பதிவிறக்கவும் (v1.0.4)",
         downloadMeta: "இலவசம் • Android 8.0+ • நேரடி நிறுவல்",
         simHeader: "நேரடி இன்-ஆப் அப்டேட் செயல்விளக்கம்",
         simBtn: "அப்டேட் சோதிக்க",
@@ -935,7 +935,7 @@ html_content = '''<!DOCTYPE html>
       const fill = document.getElementById('simProgressFill');
       const statusText = document.getElementById('simStatusText');
       const percentText = document.getElementById('simPercentText');
-      const totalMB = 50.6;
+      const totalMB = 51.4;
 
       statusText.textContent = dict.simStatusDownloading;
       let progress = 0;

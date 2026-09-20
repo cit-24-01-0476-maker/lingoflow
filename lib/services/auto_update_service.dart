@@ -65,6 +65,7 @@ class AutoUpdateService {
     required String apkUrl,
     required void Function(double progress, double downloadedMb, double totalMb) onProgress,
   }) async {
+    http.Client? client;
     try {
       final cacheDir = await NativeBridgeService.getAppCacheDir();
       if (cacheDir.isEmpty) return null;
@@ -75,9 +76,33 @@ class AutoUpdateService {
         } catch (_) {}
       }
 
-      final client = http.Client();
-      final request = http.Request('GET', Uri.parse(apkUrl));
-      final streamedResponse = await client.send(request);
+      client = http.Client();
+      var currentUrl = apkUrl;
+      http.StreamedResponse? streamedResponse;
+
+      // Follow any redirects up to 5 times (e.g. GitHub releases to AWS S3 CDN)
+      for (int i = 0; i < 5; i++) {
+        final request = http.Request('GET', Uri.parse(currentUrl));
+        request.followRedirects = false;
+        final res = await client.send(request);
+
+        if ((res.statusCode == 301 || res.statusCode == 302 || res.statusCode == 307 || res.statusCode == 308) &&
+            res.headers.containsKey('location')) {
+          currentUrl = res.headers['location']!;
+          continue;
+        }
+
+        if (res.statusCode == 200) {
+          streamedResponse = res;
+          break;
+        } else {
+          throw Exception('Download server returned HTTP ${res.statusCode}');
+        }
+      }
+
+      if (streamedResponse == null) {
+        throw Exception('Unable to establish direct download stream from $apkUrl');
+      }
 
       final totalBytes = streamedResponse.contentLength ?? (51 * 1024 * 1024);
       int receivedBytes = 0;
@@ -96,8 +121,14 @@ class AutoUpdateService {
       await sink.close();
       client.close();
 
+      // Verify the downloaded file is a valid size (> 10MB)
+      if (!await targetFile.exists() || (await targetFile.length()) < 10 * 1024 * 1024) {
+        throw Exception('Incomplete APK file received (${await targetFile.length()} bytes)');
+      }
+
       return targetFile.path;
     } catch (e) {
+      client?.close();
       return null;
     }
   }

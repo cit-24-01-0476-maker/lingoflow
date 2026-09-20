@@ -130,7 +130,8 @@ class MainActivity : FlutterActivity() {
                     result.success(true)
                 }
                 "getAppCacheDir" -> {
-                    result.success(cacheDir.absolutePath)
+                    val dir = getExternalFilesDir(android.os.Environment.DIRECTORY_DOWNLOADS) ?: externalCacheDir ?: cacheDir
+                    result.success(dir.absolutePath)
                 }
                 "installApkFile" -> {
                     val filePath = call.argument<String>("filePath") ?: ""

@@ -26,11 +26,23 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        release {
+            storeFile file("singlishgo.keystore")
+            storePassword "singlishgo123"
+            keyAlias "singlishgo"
+            keyPassword "singlishgo123"
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.release
             minifyEnabled false
             shrinkResources false
+        }
+        debug {
+            signingConfig = signingConfigs.release
         }
     }
 }

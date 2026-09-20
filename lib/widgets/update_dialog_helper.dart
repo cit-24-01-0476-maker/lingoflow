@@ -24,7 +24,7 @@ class LiveUpdateDialog extends StatefulWidget {
 
 enum UpdateState { prompt, downloading, readyToInstall, error }
 
-class _LiveUpdateDialogState extends State<LiveUpdateDialog> {
+class _LiveUpdateDialogState extends State<LiveUpdateDialog> with WidgetsBindingObserver {
   UpdateState _state = UpdateState.prompt;
   double _progress = 0.0;
   double _downloadedMb = 0.0;
@@ -32,6 +32,28 @@ class _LiveUpdateDialogState extends State<LiveUpdateDialog> {
   String _statusText = 'Preparing download...';
   String? _downloadedFilePath;
   String _errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed &&
+        _state == UpdateState.readyToInstall &&
+        _downloadedFilePath != null) {
+      // User just enabled permission in settings and resumed the app -> immediately open installer!
+      _launchInstaller(_downloadedFilePath!);
+    }
+  }
 
   Future<void> _startDownload() async {
     setState(() {
@@ -67,8 +89,8 @@ class _LiveUpdateDialogState extends State<LiveUpdateDialog> {
           _statusText = 'Download complete! Opening installer...';
         });
 
-        // Short delay so user sees 100% completion before installer opens
-        await Future.delayed(const Duration(milliseconds: 600));
+        // Small pause to display 100% complete before opening the system installer
+        await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) {
           await _launchInstaller(filePath);
         }
@@ -103,7 +125,18 @@ class _LiveUpdateDialogState extends State<LiveUpdateDialog> {
     try {
       final canInstall = await NativeBridgeService.canRequestPackageInstalls();
       if (!canInstall) {
+        if (mounted) {
+          setState(() {
+            _statusText = 'Please allow unknown app installs in Settings to complete update.';
+          });
+        }
         await NativeBridgeService.openInstallPermissionSettings();
+        return;
+      }
+      if (mounted) {
+        setState(() {
+          _statusText = 'Opening Android installer...';
+        });
       }
       await AutoUpdateService.installApk(filePath);
     } catch (e) {

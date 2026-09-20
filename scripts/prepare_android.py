@@ -26,6 +26,12 @@ def main():
         shutil.copytree(found_kotlin, dest_k)
         print(f"[+] Backed up Kotlin files from {found_kotlin}")
 
+    # Backup keystore
+    keystore_src = "android/app/singlishgo.keystore"
+    if os.path.exists(keystore_src):
+        shutil.copy2(keystore_src, os.path.join(backup_dir, "singlishgo.keystore"))
+        print(f"[+] Backed up keystore from {keystore_src}")
+
     # Backup mipmaps
     res_dir = "android/app/src/main/res"
     backed_mipmaps = os.path.join(backup_dir, "mipmaps")
@@ -54,6 +60,12 @@ def main():
         for f in os.listdir(backed_k):
             shutil.copy2(os.path.join(backed_k, f), os.path.join(target_kotlin, f))
         print(f"[+] Restored Kotlin files to {target_kotlin}: {os.listdir(target_kotlin)}")
+
+    # Restore keystore
+    backed_keystore = os.path.join(backup_dir, "singlishgo.keystore")
+    if os.path.exists(backed_keystore):
+        shutil.copy2(backed_keystore, "android/app/singlishgo.keystore")
+        print("[+] Restored singlishgo.keystore to android/app/")
 
     # Restore custom mipmaps
     target_res = "android/app/src/main/res"
@@ -175,11 +187,27 @@ dependencies {
 }
 """
             g_content += "\n" + deps
+
+        # Inject release signing config
+        signing_block = """
+    signingConfigs {
+        release {
+            storeFile file("singlishgo.keystore")
+            storePassword "singlishgo123"
+            keyAlias "singlishgo"
+            keyPassword "singlishgo123"
+        }
+    }
+"""
+        if "singlishgo.keystore" not in g_content:
+            g_content = g_content.replace("buildTypes {", signing_block + "\n    buildTypes {", 1)
+
+        g_content = g_content.replace("signingConfig = signingConfigs.debug", "signingConfig = signingConfigs.release")
         g_content = g_content.replace("minifyEnabled true", "minifyEnabled false")
         g_content = g_content.replace("shrinkResources true", "shrinkResources false")
         with open(gradle_groovy, "w", encoding="utf-8") as f:
             f.write(g_content)
-        print("[+] Patched build.gradle")
+        print("[+] Patched build.gradle with signingConfigs.release")
 
 if __name__ == "__main__":
     main()

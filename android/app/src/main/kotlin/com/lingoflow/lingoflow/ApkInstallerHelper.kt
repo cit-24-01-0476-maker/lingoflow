@@ -74,7 +74,13 @@ object ApkInstallerHelper {
     fun installApkFromFile(context: Context, filePath: String) {
         try {
             val apkFile = File(filePath)
-            if (!apkFile.exists()) return
+            if (!apkFile.exists()) {
+                android.util.Log.e("ApkInstaller", "APK does not exist at $filePath")
+                return
+            }
+
+            // Ensure APK is globally readable by installer process
+            apkFile.setReadable(true, false)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 if (!context.packageManager.canRequestPackageInstalls()) {
@@ -100,11 +106,26 @@ object ApkInstallerHelper {
             val installIntent = Intent(Intent.ACTION_VIEW).apply {
                 setDataAndType(apkUri, "application/vnd.android.package-archive")
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                putExtra(Intent.EXTRA_NOT_UNKNOWN_SOURCE, true)
+            }
+
+            // Explicitly grant URI permissions to resolving package installer
+            val resolveInfoList = context.packageManager.queryIntentActivities(
+                installIntent,
+                android.content.pm.PackageManager.MATCH_DEFAULT_ONLY
+            )
+            for (resolveInfo in resolveInfoList) {
+                context.grantUriPermission(
+                    resolveInfo.activityInfo.packageName,
+                    apkUri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+                )
             }
 
             context.startActivity(installIntent)
         } catch (e: Exception) {
             e.printStackTrace()
+            android.util.Log.e("ApkInstaller", "Error opening installer: ${e.message}")
         }
     }
 

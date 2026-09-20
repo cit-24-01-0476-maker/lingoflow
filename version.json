@@ -1,16 +1,15 @@
 {
-  "version_code": 4,
-  "version_name": "1.0.3",
+  "version_code": 5,
+  "version_name": "1.0.4",
   "min_supported_version": 1,
   "apk_url": "https://github.com/cit-24-01-0476-maker/lingoflow/releases/latest/download/app-release.apk",
-  "apk_size_mb": 50.6,
+  "apk_size_mb": 51.4,
   "force_update": false,
   "release_date": "2026-09-20",
   "release_notes": [
-    "Official rebranding to SinglishGo with 3D Glossy Jelly Icon",
-    "Added Tamil (தமிழ்) translation alongside Sinhala & English",
-    "Floating Assistive Bubble updated with Tamil mode & live cycling",
-    "Real-time Live In-App Update progress bar with direct installer",
-    "Trilingual interactive web landing page"
+    "Fixed 'App not installed' by attaching permanent release signing keystore",
+    "Enhanced APK installer with external storage and explicit URI permissions",
+    "Automatic instant installation launch right after download completion",
+    "Added app lifecycle observer to resume installer after granting unknown app permission"
   ]
 }
