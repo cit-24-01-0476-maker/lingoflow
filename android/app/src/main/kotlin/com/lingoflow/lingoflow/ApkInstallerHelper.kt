@@ -65,6 +65,10 @@ object ApkInstallerHelper {
             } else {
                 context.registerReceiver(onComplete, filter)
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
 
     fun installApkFromFile(context: Context, filePath: String) {
         try {
