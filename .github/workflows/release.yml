@@ -1,4 +1,4 @@
-﻿name: Build & Release LingoFlow APK
+name: Build & Release LingoFlow APK
 
 on:
   push:
@@ -46,7 +46,11 @@ jobs:
       - name: Prepare Release Artifacts
         run: |
           mkdir -p dist
-          cp build/app/outputs/flutter-apk/app-release.apk dist/lingoflow-v1.0.0.apk
+          TAG_NAME="${{ github.ref_name }}"
+          if [ -z "$TAG_NAME" ]; then
+            TAG_NAME="latest"
+          fi
+          cp build/app/outputs/flutter-apk/app-release.apk dist/lingoflow-${TAG_NAME}.apk
           cp build/app/outputs/flutter-apk/app-release.apk dist/app-release.apk
           cp build/app/outputs/flutter-apk/app-release.apk dist/lingoflow-latest.apk
           ls -la dist/
@@ -55,15 +59,14 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            dist/lingoflow-v1.0.0.apk
-            dist/app-release.apk
-            dist/lingoflow-latest.apk
-          name: "LingoFlow v1.0.0 Release"
+            dist/*.apk
+          name: "LingoFlow ${{ github.ref_name }} Release"
           body: |
-            ## LingoFlow - WhatsApp Message Translator v1.0.0
+            ## LingoFlow - WhatsApp Message Translator ${{ github.ref_name }}
             - 🚀 Instant Singlish to Sinhala & English translation
             - 🔔 Live WhatsApp Notification Listener
-            - 🔄 In-app automatic updates (OTA)
+            - 🔄 In-app automatic updates (OTA) with real live progress indicator
+            - 💬 Assistive Touch Floating Bubble
             - 🔒 100% Private, on-device processing
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

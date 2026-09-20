@@ -1,4 +1,4 @@
-﻿import 'package:flutter/services.dart';
+import 'package:flutter/services.dart';
 
 class NativeBridgeService {
   static const MethodChannel _methodChannel = MethodChannel('com.lingoflow.app/methods');
@@ -109,6 +109,40 @@ class NativeBridgeService {
         'timestamp': DateTime.now().millisecondsSinceEpoch,
         'package': 'com.whatsapp',
       });
+    } catch (e) {}
+  }
+
+  static Future<String> getAppCacheDir() async {
+    try {
+      final String? path = await _methodChannel.invokeMethod<String>('getAppCacheDir');
+      return path ?? '';
+    } catch (e) {
+      return '';
+    }
+  }
+
+  static Future<void> installApkFile(String filePath) async {
+    try {
+      await _methodChannel.invokeMethod('installApkFile', {
+        'filePath': filePath,
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  static Future<bool> canRequestPackageInstalls() async {
+    try {
+      final bool? canInstall = await _methodChannel.invokeMethod<bool>('canRequestPackageInstalls');
+      return canInstall ?? true;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  static Future<void> openInstallPermissionSettings() async {
+    try {
+      await _methodChannel.invokeMethod('openInstallPermissionSettings');
     } catch (e) {}
   }
 

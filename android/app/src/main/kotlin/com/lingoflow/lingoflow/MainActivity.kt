@@ -1,4 +1,4 @@
-﻿package com.lingoflow.lingoflow
+package com.lingoflow.lingoflow
 
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
@@ -57,13 +57,14 @@ class MainActivity : FlutterActivity() {
                     result.success(true)
                 }
                 "startFloatingBubble" -> {
-                    val intent = Intent(this, FloatingBubbleService::class.java)
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        startForegroundService(intent)
-                    } else {
+                    try {
+                        val intent = Intent(this, FloatingBubbleService::class.java)
                         startService(intent)
+                        result.success(true)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        result.error("SERVICE_ERROR", e.message, null)
                     }
-                    result.success(true)
                 }
                 "stopFloatingBubble" -> {
                     val intent = Intent(this, FloatingBubbleService::class.java)
@@ -126,6 +127,36 @@ class MainActivity : FlutterActivity() {
                         "package" to pkg
                     )
                     eventSink?.success(payload)
+                    result.success(true)
+                }
+                "getAppCacheDir" -> {
+                    result.success(cacheDir.absolutePath)
+                }
+                "installApkFile" -> {
+                    val filePath = call.argument<String>("filePath") ?: ""
+                    if (filePath.isNotBlank()) {
+                        ApkInstallerHelper.installApkFromFile(this, filePath)
+                        result.success(true)
+                    } else {
+                        result.error("INVALID_PATH", "APK file path is blank", null)
+                    }
+                }
+                "canRequestPackageInstalls" -> {
+                    val canInstall = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        packageManager.canRequestPackageInstalls()
+                    } else {
+                        true
+                    }
+                    result.success(canInstall)
+                }
+                "openInstallPermissionSettings" -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                            data = Uri.parse("package:$packageName")
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        startActivity(intent)
+                    }
                     result.success(true)
                 }
                 "downloadAndInstallApk" -> {

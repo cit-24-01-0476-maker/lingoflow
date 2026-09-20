@@ -1,8 +1,10 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../models/models.dart';
 import '../../services/translation_service.dart';
+import '../../services/auto_update_service.dart';
+import '../../widgets/update_dialog_helper.dart';
 import '../../core/services/native_bridge_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -250,9 +252,31 @@ class SettingsScreen extends ConsumerWidget {
 
           _buildSectionHeader('About LingoFlow'),
           _buildCard([
-            const ListTile(
-              title: Text('Version', style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w600)),
-              trailing: Text('1.0.1 (Floating Bubble Build)', style: TextStyle(color: AppColors.textMutedDark)),
+            ListTile(
+              title: const Text('Version', style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w600)),
+              subtitle: const Text('Tap to check for latest updates', style: TextStyle(color: AppColors.textMutedDark, fontSize: 12)),
+              trailing: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryBlue.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.primaryBlue.withOpacity(0.4)),
+                ),
+                child: const Text('v1.0.2', style: TextStyle(color: AppColors.primaryAccent, fontWeight: FontWeight.bold, fontSize: 12)),
+              ),
+              onTap: () async {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Checking for updates...'), duration: Duration(seconds: 1)),
+                );
+                final update = await AutoUpdateService.checkForUpdate();
+                if (update != null) {
+                  UpdateDialogHelper.showUpdatePrompt(context, update);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('🎉 You are already on the latest version of LingoFlow!')),
+                  );
+                }
+              },
             ),
             const Divider(color: AppColors.cardDarkBorder, height: 1),
             const ListTile(

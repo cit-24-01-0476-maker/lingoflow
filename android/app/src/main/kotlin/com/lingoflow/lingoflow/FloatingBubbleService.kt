@@ -1,4 +1,4 @@
-﻿package com.lingoflow.lingoflow
+package com.lingoflow.lingoflow
 
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
@@ -75,23 +75,31 @@ class FloatingBubbleService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        isRunning = true
-        windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        initFloatingBubbleView()
+        try {
+            isRunning = true
+            windowManager = getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            initFloatingBubbleView()
 
-        val filter = IntentFilter().apply {
-            addAction(ACTION_SHOW_MESSAGE)
-            addAction(ACTION_SET_LANGUAGE)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            registerReceiver(messageReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
-        } else {
-            registerReceiver(messageReceiver, filter)
+            val filter = IntentFilter().apply {
+                addAction(ACTION_SHOW_MESSAGE)
+                addAction(ACTION_SET_LANGUAGE)
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(messageReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
+            } else {
+                registerReceiver(messageReceiver, filter)
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            stopSelf()
         }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initFloatingBubbleView() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            return
+        }
         val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         } else {

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../core/services/native_bridge_service.dart';
 
@@ -42,7 +43,7 @@ class AutoUpdateService {
   static Future<AppUpdateInfo?> checkForUpdate({String? customUrl}) async {
     try {
       final url = Uri.parse(customUrl ?? updateCheckUrl);
-      final response = await http.get(url).timeout(const Duration(seconds: 4));
+      final response = await http.get(url).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
@@ -59,7 +60,54 @@ class AutoUpdateService {
     return null;
   }
 
-  /// Initiates download and invokes Android Package Installer
+  /// Downloads APK with live progress callback (bytes received, total, ratio)
+  static Future<String?> downloadApkWithProgress({
+    required String apkUrl,
+    required void Function(double progress, double downloadedMb, double totalMb) onProgress,
+  }) async {
+    try {
+      final cacheDir = await NativeBridgeService.getAppCacheDir();
+      if (cacheDir.isEmpty) return null;
+      final targetFile = File('$cacheDir/lingoflow_update.apk');
+      if (await targetFile.exists()) {
+        try {
+          await targetFile.delete();
+        } catch (_) {}
+      }
+
+      final client = http.Client();
+      final request = http.Request('GET', Uri.parse(apkUrl));
+      final streamedResponse = await client.send(request);
+
+      final totalBytes = streamedResponse.contentLength ?? (51 * 1024 * 1024);
+      int receivedBytes = 0;
+
+      final sink = targetFile.openWrite();
+      await streamedResponse.stream.forEach((chunk) {
+        sink.add(chunk);
+        receivedBytes += chunk.length;
+        final progress = (receivedBytes / totalBytes).clamp(0.0, 1.0);
+        final downloadedMb = receivedBytes / (1024 * 1024);
+        final totalMb = totalBytes / (1024 * 1024);
+        onProgress(progress, downloadedMb, totalMb);
+      });
+
+      await sink.flush();
+      await sink.close();
+      client.close();
+
+      return targetFile.path;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Launches native installer for the downloaded file
+  static Future<void> installApk(String filePath) async {
+    await NativeBridgeService.installApkFile(filePath);
+  }
+
+  /// Fallback background download via DownloadManager
   static Future<void> triggerUpdate(String apkUrl) async {
     await NativeBridgeService.downloadAndInstallApk(apkUrl);
   }

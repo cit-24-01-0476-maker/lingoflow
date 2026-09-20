@@ -1,4 +1,4 @@
-﻿import os
+import os
 import shutil
 import re
 import subprocess
@@ -46,7 +46,15 @@ def main():
     res_xml = "android/app/src/main/res/xml"
     os.makedirs(res_xml, exist_ok=True)
     with open(os.path.join(res_xml, "file_paths.xml"), "w", encoding="utf-8") as f:
-        f.write('<?xml version="1.0" encoding="utf-8"?>\n<paths xmlns:android="http://schemas.android.com/apk/res/android">\n    <external-files-path name="my_downloads" path="Download" />\n    <external-path name="external_files" path="." />\n</paths>\n')
+        f.write('''<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <cache-path name="internal_cache" path="." />
+    <files-path name="internal_files" path="." />
+    <external-path name="external_storage" path="." />
+    <external-cache-path name="external_cache" path="." />
+    <external-files-path name="external_files" path="." />
+</paths>
+''')
     print("[+] Created file_paths.xml")
 
     # 5. Patch AndroidManifest.xml
@@ -56,6 +64,9 @@ def main():
 
     # Remove package="..." if present
     content = re.sub(r'\s*package="[^"]*"', '', content)
+
+    # Ensure MainActivity has fully-qualified name
+    content = content.replace('android:name=".MainActivity"', 'android:name="com.lingoflow.lingoflow.MainActivity"')
 
     # Add permissions
     permissions = """
@@ -73,7 +84,7 @@ def main():
     # Add Service and Provider inside <application>
     extra_tags = """
         <service
-            android:name=".LingoNotificationListenerService"
+            android:name="com.lingoflow.lingoflow.LingoNotificationListenerService"
             android:label="LingoFlow WhatsApp Notification Listener"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             android:exported="true">
@@ -83,7 +94,7 @@ def main():
         </service>
 
         <service
-            android:name=".FloatingBubbleService"
+            android:name="com.lingoflow.lingoflow.FloatingBubbleService"
             android:label="LingoFlow Assistive Touch Floating Bubble"
             android:exported="false" />
 
@@ -103,6 +114,45 @@ def main():
     with open(manifest_file, "w", encoding="utf-8") as f:
         f.write(content)
     print("[+] Patched AndroidManifest.xml")
+
+    # 6. Patch build.gradle / build.gradle.kts to guarantee dependencies and disable minification
+    gradle_kts = "android/app/build.gradle.kts"
+    gradle_groovy = "android/app/build.gradle"
+
+    if os.path.exists(gradle_kts):
+        with open(gradle_kts, "r", encoding="utf-8") as f:
+            g_content = f.read()
+        if "androidx.core:core-ktx" not in g_content:
+            deps = """
+dependencies {
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+}
+"""
+            g_content += "\n" + deps
+        # disable minification
+        g_content = g_content.replace("isMinifyEnabled = true", "isMinifyEnabled = false")
+        g_content = g_content.replace("isShrinkResources = true", "isShrinkResources = false")
+        with open(gradle_kts, "w", encoding="utf-8") as f:
+            f.write(g_content)
+        print("[+] Patched build.gradle.kts")
+
+    if os.path.exists(gradle_groovy):
+        with open(gradle_groovy, "r", encoding="utf-8") as f:
+            g_content = f.read()
+        if "androidx.core:core-ktx" not in g_content:
+            deps = """
+dependencies {
+    implementation "androidx.core:core-ktx:1.12.0"
+    implementation "androidx.appcompat:appcompat:1.6.1"
+}
+"""
+            g_content += "\n" + deps
+        g_content = g_content.replace("minifyEnabled true", "minifyEnabled false")
+        g_content = g_content.replace("shrinkResources true", "shrinkResources false")
+        with open(gradle_groovy, "w", encoding="utf-8") as f:
+            f.write(g_content)
+        print("[+] Patched build.gradle")
 
 if __name__ == "__main__":
     main()

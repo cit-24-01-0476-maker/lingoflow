@@ -1,4 +1,4 @@
-﻿package com.lingoflow.lingoflow
+package com.lingoflow.lingoflow
 
 import android.annotation.SuppressLint
 import android.app.DownloadManager
@@ -66,29 +66,44 @@ object ApkInstallerHelper {
                 context.registerReceiver(onComplete, filter)
             }
 
+    fun installApkFromFile(context: Context, filePath: String) {
+        try {
+            val apkFile = File(filePath)
+            if (!apkFile.exists()) return
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (!context.packageManager.canRequestPackageInstalls()) {
+                    val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
+                        data = Uri.parse("package:${context.packageName}")
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    }
+                    context.startActivity(intent)
+                    return
+                }
+            }
+
+            val apkUri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                FileProvider.getUriForFile(
+                    context,
+                    "${context.packageName}.fileprovider",
+                    apkFile
+                )
+            } else {
+                Uri.fromFile(apkFile)
+            }
+
+            val installIntent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(apkUri, "application/vnd.android.package-archive")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            }
+
+            context.startActivity(installIntent)
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
     private fun installDownloadedApk(context: Context, apkFile: File) {
-        if (!apkFile.exists()) return
-
-        val apkUri: Uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            FileProvider.getUriForFile(
-                context,
-                "${context.packageName}.fileprovider",
-                apkFile
-            )
-        } else {
-            Uri.fromFile(apkFile)
-        }
-
-        val installIntent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(apkUri, "application/vnd.android.package-archive")
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
-        }
-
-        context.startActivity(installIntent)
+        installApkFromFile(context, apkFile.absolutePath)
     }
 }
