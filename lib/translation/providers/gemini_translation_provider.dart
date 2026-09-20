@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../models/models.dart';
 import 'translation_provider.dart';
@@ -31,13 +31,14 @@ class GeminiTranslationProvider implements TranslationProvider {
     );
 
     final prompt = '''
-You are LingoFlow's high-speed Sri Lankan translator.
+You are SinglishGo's high-speed Sri Lankan trilingual translator.
 Input message: "$text"
 Detected Language: ${detectedLanguage.name}
 Output strict JSON with format:
 {
   "sinhala": "<natural modern Sinhala translation or transliteration if input was Singlish/English>",
-  "english": "<accurate English translation>"
+  "english": "<accurate English translation>",
+  "tamil": "<accurate modern Tamil translation>"
 }
 Do not include markdown or formatting, only valid raw JSON.
 ''';
@@ -55,7 +56,7 @@ Do not include markdown or formatting, only valid raw JSON.
         ],
         'generationConfig': {
           'temperature': 0.2,
-          'maxOutputTokens': 200,
+          'maxOutputTokens': 250,
         }
       }),
     ).timeout(const Duration(seconds: 4));
@@ -70,6 +71,7 @@ Do not include markdown or formatting, only valid raw JSON.
       return TranslationResult(
         sinhala: parsed['sinhala'] ?? '',
         english: parsed['english'] ?? '',
+        tamil: parsed['tamil'] ?? '',
         providerName: name,
       );
     } else {

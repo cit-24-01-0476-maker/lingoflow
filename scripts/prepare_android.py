@@ -13,7 +13,7 @@ def main():
     backup_dir = "/tmp/lingo_backup"
     os.makedirs(backup_dir, exist_ok=True)
 
-    # 1. Backup our Kotlin files
+    # 1. Backup our Kotlin files and custom mipmap launcher icons
     found_kotlin = None
     for root, dirs, files in os.walk("android/app/src/main/kotlin"):
         if "MainActivity.kt" in files:
@@ -25,6 +25,19 @@ def main():
         shutil.rmtree(dest_k, ignore_errors=True)
         shutil.copytree(found_kotlin, dest_k)
         print(f"[+] Backed up Kotlin files from {found_kotlin}")
+
+    # Backup mipmaps
+    res_dir = "android/app/src/main/res"
+    backed_mipmaps = os.path.join(backup_dir, "mipmaps")
+    os.makedirs(backed_mipmaps, exist_ok=True)
+    if os.path.exists(res_dir):
+        for item in os.listdir(res_dir):
+            if item.startswith("mipmap-"):
+                src_m = os.path.join(res_dir, item)
+                dst_m = os.path.join(backed_mipmaps, item)
+                shutil.rmtree(dst_m, ignore_errors=True)
+                shutil.copytree(src_m, dst_m)
+        print(f"[+] Backed up custom mipmaps to {backed_mipmaps}")
 
     # 2. Recreate clean android scaffold
     if os.path.exists("android"):
@@ -41,6 +54,17 @@ def main():
         for f in os.listdir(backed_k):
             shutil.copy2(os.path.join(backed_k, f), os.path.join(target_kotlin, f))
         print(f"[+] Restored Kotlin files to {target_kotlin}: {os.listdir(target_kotlin)}")
+
+    # Restore custom mipmaps
+    target_res = "android/app/src/main/res"
+    if os.path.exists(backed_mipmaps):
+        for item in os.listdir(backed_mipmaps):
+            src_m = os.path.join(backed_mipmaps, item)
+            dst_m = os.path.join(target_res, item)
+            os.makedirs(dst_m, exist_ok=True)
+            for f in os.listdir(src_m):
+                shutil.copy2(os.path.join(src_m, f), os.path.join(dst_m, f))
+        print("[+] Restored custom 3D jelly launcher icons to res/mipmap-*")
 
     # 4. Create file_paths.xml for FileProvider
     res_xml = "android/app/src/main/res/xml"
@@ -65,6 +89,9 @@ def main():
     # Remove package="..." if present
     content = re.sub(r'\s*package="[^"]*"', '', content)
 
+    # Ensure label is SinglishGo
+    content = re.sub(r'android:label="[^"]*"', 'android:label="SinglishGo"', content)
+
     # Ensure MainActivity has fully-qualified name
     content = content.replace('android:name=".MainActivity"', 'android:name="com.lingoflow.lingoflow.MainActivity"')
 
@@ -85,7 +112,7 @@ def main():
     extra_tags = """
         <service
             android:name="com.lingoflow.lingoflow.LingoNotificationListenerService"
-            android:label="LingoFlow WhatsApp Notification Listener"
+            android:label="SinglishGo WhatsApp Notification Listener"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             android:exported="true">
             <intent-filter>
@@ -95,7 +122,7 @@ def main():
 
         <service
             android:name="com.lingoflow.lingoflow.FloatingBubbleService"
-            android:label="LingoFlow Assistive Touch Floating Bubble"
+            android:label="SinglishGo Assistive Touch Floating Bubble"
             android:exported="false" />
 
         <provider

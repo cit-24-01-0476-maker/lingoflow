@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/services/native_bridge_service.dart';
@@ -99,7 +99,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> with Widget
               const SizedBox(height: 12),
 
               const Text(
-                'LingoFlow needs notification access to detect incoming WhatsApp messages and provide instant translations without opening WhatsApp.',
+                'SinglishGo needs notification access to detect incoming WhatsApp messages and provide instant translations without opening WhatsApp.',
                 style: TextStyle(
                   color: AppColors.textSecondaryDark,
                   fontSize: 15,
@@ -128,7 +128,7 @@ class _PermissionScreenState extends ConsumerState<PermissionScreen> with Widget
                     _buildPrivacyItem(
                       icon: Icons.visibility_off_outlined,
                       title: 'WhatsApp Notifications Only',
-                      subtitle: 'LingoFlow filters specifically for supported messaging apps.',
+                      subtitle: 'SinglishGo filters specifically for supported messaging apps.',
                     ),
                     const SizedBox(height: 16),
                     _buildPrivacyItem(

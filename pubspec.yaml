@@ -1,7 +1,7 @@
 name: lingoflow
-description: "LingoFlow - WhatsApp Notification Message Translator (Singlish, Sinhala, English)"
+description: "SinglishGo - Instant WhatsApp Message Translator (Singlish, Sinhala, English, Tamil)"
 publish_to: 'none'
-version: 1.0.2+3
+version: 1.0.3+4
 
 environment:
   sdk: '>=3.3.0 <4.0.0'
@@ -24,3 +24,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/app_logo.png

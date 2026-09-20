@@ -23,7 +23,7 @@ class SettingsScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Optional: Add your Google Gemini API key for conversational nuances. If left empty, LingoFlow will use the fast built-in offline engine.',
+              'Optional: Add your Google Gemini API key for conversational nuances. If left empty, SinglishGo will use the fast built-in offline engine.',
               style: TextStyle(color: AppColors.textSecondaryDark, fontSize: 13),
             ),
             const SizedBox(height: 16),
@@ -113,7 +113,9 @@ class SettingsScreen extends ConsumerWidget {
               subtitle: Text(
                 settings.targetLanguage == 'sinhala'
                     ? 'සිංහල (Sinhala Only)'
-                    : (settings.targetLanguage == 'english' ? 'English Only' : 'Dual (Sinhala + English)'),
+                    : (settings.targetLanguage == 'english'
+                        ? 'English Only'
+                        : (settings.targetLanguage == 'tamil' ? 'தமிழ் (Tamil Only)' : 'Dual (Sinhala + English)')),
                 style: const TextStyle(color: AppColors.primaryAccent, fontSize: 12),
               ),
               trailing: DropdownButton<String>(
@@ -124,6 +126,7 @@ class SettingsScreen extends ConsumerWidget {
                 items: const [
                   DropdownMenuItem(value: 'sinhala', child: Text('සිංහල (Sinhala)')),
                   DropdownMenuItem(value: 'english', child: Text('English')),
+                  DropdownMenuItem(value: 'tamil', child: Text('தமிழ் (Tamil)')),
                   DropdownMenuItem(value: 'dual', child: Text('Dual (සිංහල + EN)')),
                 ],
                 onChanged: (val) {
@@ -250,8 +253,51 @@ class SettingsScreen extends ConsumerWidget {
 
           const SizedBox(height: 24),
 
-          _buildSectionHeader('About LingoFlow'),
+          _buildSectionHeader('About SinglishGo'),
           _buildCard([
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              child: Row(
+                children: [
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF10B981).withOpacity(0.4),
+                          blurRadius: 12,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(24),
+                      child: Image.asset('assets/images/app_logo.png', width: 48, height: 48, fit: BoxFit.cover),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          'SinglishGo',
+                          style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                        SizedBox(height: 2),
+                        Text(
+                          'Instant WhatsApp Chat Translator',
+                          style: TextStyle(color: AppColors.textMutedDark, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(color: AppColors.cardDarkBorder, height: 1),
             ListTile(
               title: const Text('Version', style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w600)),
               subtitle: const Text('Tap to check for latest updates', style: TextStyle(color: AppColors.textMutedDark, fontSize: 12)),
@@ -262,7 +308,7 @@ class SettingsScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: AppColors.primaryBlue.withOpacity(0.4)),
                 ),
-                child: const Text('v1.0.2', style: TextStyle(color: AppColors.primaryAccent, fontWeight: FontWeight.bold, fontSize: 12)),
+                child: const Text('v1.0.3', style: TextStyle(color: AppColors.primaryAccent, fontWeight: FontWeight.bold, fontSize: 12)),
               ),
               onTap: () async {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -273,16 +319,39 @@ class SettingsScreen extends ConsumerWidget {
                   UpdateDialogHelper.showUpdatePrompt(context, update);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('🎉 You are already on the latest version of LingoFlow!')),
+                    const SnackBar(content: Text('🎉 You are already on the latest version of SinglishGo!')),
                   );
                 }
+              },
+            ),
+            const Divider(color: AppColors.cardDarkBorder, height: 1),
+            ListTile(
+              leading: const Icon(Icons.downloading_rounded, color: AppColors.primaryAccent, size: 22),
+              title: const Text('Test Live Update Bar', style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w600)),
+              subtitle: const Text('Preview live 0-100% download animation', style: TextStyle(color: AppColors.textMutedDark, fontSize: 12)),
+              trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textMutedDark),
+              onTap: () {
+                final demoInfo = AppUpdateInfo(
+                  versionCode: 4,
+                  versionName: '1.0.3',
+                  apkUrl: 'https://github.com/cit-24-01-0476-maker/lingoflow/releases/latest/download/app-release.apk',
+                  apkSizeMb: 50.6,
+                  forceUpdate: false,
+                  releaseNotes: [
+                    'Rebranded to SinglishGo with 3D Glossy Jelly Icon',
+                    'Added Tamil (தமிழ்) translation support',
+                    'Real-time live progress bar (0% -> 100%)',
+                    'Automatic APK installer launch upon download completion'
+                  ],
+                );
+                UpdateDialogHelper.showUpdatePrompt(context, demoInfo);
               },
             ),
             const Divider(color: AppColors.cardDarkBorder, height: 1),
             const ListTile(
               title: Text('Privacy Statement', style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.w600)),
               subtitle: Text(
-                'Your conversations belong to you. LingoFlow processes only the message content required for translation.',
+                'Your conversations belong to you. SinglishGo processes only the message content required for translation.',
                 style: TextStyle(color: AppColors.textMutedDark, fontSize: 12),
               ),
             ),

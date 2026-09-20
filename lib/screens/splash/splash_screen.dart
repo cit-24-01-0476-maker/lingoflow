@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import '../../core/theme/app_theme.dart';
 import '../onboarding/onboarding_screen.dart';
 
@@ -63,52 +63,63 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Glowing circular App Logo
+                // Glowing circular 3D Jelly App Logo
                 Container(
-                  width: 90,
-                  height: 90,
+                  width: 110,
+                  height: 110,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [AppColors.primaryBlue, AppColors.primaryAccent],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.primaryAccent.withOpacity(0.4),
-                        blurRadius: 30,
+                        color: const Color(0xFF10B981).withOpacity(0.45),
+                        blurRadius: 35,
+                        spreadRadius: 4,
+                      ),
+                      BoxShadow(
+                        color: const Color(0xFF06B6D4).withOpacity(0.35),
+                        blurRadius: 20,
                         spreadRadius: 2,
                       )
                     ],
                   ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.translate_rounded,
-                      color: Colors.white,
-                      size: 44,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(55),
+                    child: Image.asset(
+                      'assets/images/app_logo.png',
+                      width: 110,
+                      height: 110,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
                 const SizedBox(height: 24),
                 // App Title
                 const Text(
-                  'LingoFlow',
+                  'SinglishGo',
                   style: TextStyle(
                     color: AppColors.textPrimaryDark,
-                    fontSize: 32,
-                    fontWeight: FontWeight.w800,
+                    fontSize: 34,
+                    fontWeight: FontWeight.w900,
                     letterSpacing: -0.5,
                   ),
                 ),
                 const SizedBox(height: 8),
                 // Subtitle
                 const Text(
-                  'Messages without language barriers.',
+                  'Instant WhatsApp Message Translator',
+                  style: TextStyle(
+                    color: AppColors.primaryAccent,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                const Text(
+                  'සිංහල • English • தமிழ்',
                   style: TextStyle(
                     color: AppColors.textSecondaryDark,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w400,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],

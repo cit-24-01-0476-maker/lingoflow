@@ -50,9 +50,11 @@ jobs:
           if [ -z "$TAG_NAME" ]; then
             TAG_NAME="latest"
           fi
+          cp build/app/outputs/flutter-apk/app-release.apk dist/singlishgo-${TAG_NAME}.apk
+          cp build/app/outputs/flutter-apk/app-release.apk dist/singlishgo-latest.apk
           cp build/app/outputs/flutter-apk/app-release.apk dist/lingoflow-${TAG_NAME}.apk
-          cp build/app/outputs/flutter-apk/app-release.apk dist/app-release.apk
           cp build/app/outputs/flutter-apk/app-release.apk dist/lingoflow-latest.apk
+          cp build/app/outputs/flutter-apk/app-release.apk dist/app-release.apk
           ls -la dist/
 
       - name: Create GitHub Release
@@ -60,13 +62,13 @@ jobs:
         with:
           files: |
             dist/*.apk
-          name: "LingoFlow ${{ github.ref_name }} Release"
+          name: "SinglishGo ${{ github.ref_name }} Release"
           body: |
-            ## LingoFlow - WhatsApp Message Translator ${{ github.ref_name }}
-            - 🚀 Instant Singlish to Sinhala & English translation
-            - 🔔 Live WhatsApp Notification Listener
-            - 🔄 In-app automatic updates (OTA) with real live progress indicator
-            - 💬 Assistive Touch Floating Bubble
-            - 🔒 100% Private, on-device processing
+            ## SinglishGo - WhatsApp Message Translator ${{ github.ref_name }}
+            - 🚀 Rebranded to **SinglishGo** with iOS-style 3D Jelly App Icon!
+            - 🌐 Trilingual Translation: Singlish, Sinhala, English & Tamil (தமிழ்)
+            - 🫧 Assistive Touch Floating Bubble with live Tamil badge & cycling
+            - 🔄 Real-time In-App Live Update with download progress & automatic installer
+            - 🔒 100% Private, on-device processing & official Android notification APIs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

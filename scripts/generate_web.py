@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+import os
+
+html_content = '''<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -979,3 +981,14 @@
   </script>
 </body>
 </html>
+'''
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+print("[+] Successfully generated index.html")
+
+os.makedirs("docs", exist_ok=True)
+with open("docs/index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+print("[+] Successfully generated docs/index.html")
+

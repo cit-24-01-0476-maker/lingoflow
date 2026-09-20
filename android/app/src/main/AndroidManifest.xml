@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="29" />
 
     <application
-        android:label="LingoFlow"
+        android:label="SinglishGo"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
 
@@ -34,7 +34,7 @@
 
         <service
             android:name="com.lingoflow.lingoflow.LingoNotificationListenerService"
-            android:label="LingoFlow WhatsApp Notification Listener"
+            android:label="SinglishGo WhatsApp Notification Listener"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
             android:exported="true">
             <intent-filter>
@@ -44,7 +44,7 @@
 
         <service
             android:name="com.lingoflow.lingoflow.FloatingBubbleService"
-            android:label="LingoFlow Assistive Touch Floating Bubble"
+            android:label="SinglishGo Assistive Touch Floating Bubble"
             android:exported="false" />
 
         <provider

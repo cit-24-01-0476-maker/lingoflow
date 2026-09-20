@@ -1,4 +1,4 @@
-﻿import '../../models/models.dart';
+import '../../models/models.dart';
 
 abstract class TranslationProvider {
   String get name;
@@ -14,12 +14,14 @@ abstract class TranslationProvider {
 class TranslationResult {
   final String sinhala;
   final String english;
+  final String tamil;
   final String providerName;
   final bool isCached;
 
   TranslationResult({
     required this.sinhala,
     required this.english,
+    this.tamil = '',
     required this.providerName,
     this.isCached = false,
   });

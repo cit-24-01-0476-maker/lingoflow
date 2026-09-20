@@ -191,18 +191,25 @@ class HomeScreen extends ConsumerWidget {
         title: Row(
           children: [
             Container(
-              width: 32,
-              height: 32,
+              width: 34,
+              height: 34,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  colors: [AppColors.primaryBlue, AppColors.primaryAccent],
-                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF10B981).withOpacity(0.4),
+                    blurRadius: 10,
+                    spreadRadius: 1,
+                  )
+                ],
               ),
-              child: const Icon(Icons.translate_rounded, color: Colors.white, size: 18),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(17),
+                child: Image.asset('assets/images/app_logo.png', width: 34, height: 34, fit: BoxFit.cover),
+              ),
             ),
             const SizedBox(width: 10),
-            const Text('LingoFlow'),
+            const Text('SinglishGo', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: -0.5)),
           ],
         ),
         actions: [
@@ -248,7 +255,7 @@ class HomeScreen extends ConsumerWidget {
                       children: [
                         Text(
                           settings.autoTranslationEnabled
-                              ? 'LingoFlow is active & listening'
+                              ? 'SinglishGo is active & listening'
                               : 'Auto-Translation Paused',
                           style: const TextStyle(
                             color: AppColors.textPrimaryDark,
@@ -417,19 +424,24 @@ class HomeScreen extends ConsumerWidget {
                     const SizedBox(height: 12),
                     const Divider(color: AppColors.cardDarkBorder, height: 1),
                     const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        const Text(
-                          'Target:',
-                          style: TextStyle(color: AppColors.textMutedDark, fontSize: 12, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(width: 8),
-                        _buildLangChip('සිංහල', 'sinhala', settings.targetLanguage, () => settingsNotifier.setTargetLanguage('sinhala')),
-                        const SizedBox(width: 6),
-                        _buildLangChip('English', 'english', settings.targetLanguage, () => settingsNotifier.setTargetLanguage('english')),
-                        const SizedBox(width: 6),
-                        _buildLangChip('Dual', 'dual', settings.targetLanguage, () => settingsNotifier.setTargetLanguage('dual')),
-                      ],
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          const Text(
+                            'Target:',
+                            style: TextStyle(color: AppColors.textMutedDark, fontSize: 12, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 8),
+                          _buildLangChip('සිංහල', 'sinhala', settings.targetLanguage, () => settingsNotifier.setTargetLanguage('sinhala')),
+                          const SizedBox(width: 6),
+                          _buildLangChip('English', 'english', settings.targetLanguage, () => settingsNotifier.setTargetLanguage('english')),
+                          const SizedBox(width: 6),
+                          _buildLangChip('தமிழ்', 'tamil', settings.targetLanguage, () => settingsNotifier.setTargetLanguage('tamil')),
+                          const SizedBox(width: 6),
+                          _buildLangChip('Dual', 'dual', settings.targetLanguage, () => settingsNotifier.setTargetLanguage('dual')),
+                        ],
+                      ),
                     ),
                   ],
                 ],

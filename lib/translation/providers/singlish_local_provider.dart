@@ -1,4 +1,4 @@
-﻿import '../../models/models.dart';
+import '../../models/models.dart';
 import '../engine/singlish_transliteration_engine.dart';
 import 'translation_provider.dart';
 
@@ -52,6 +52,35 @@ class SinglishLocalProvider implements TranslationProvider {
     'i am not coming to class today': "මම අද class එකට එන්නේ නැහැ.",
   };
 
+  static final Map<String, String> _phraseToTamil = {
+    'mama ada class ekata enne na': "நான் இன்று வகுப்புக்கு வரவில்லை.",
+    'mama ada class ekata enne naha': "நான் இன்று வகுப்புக்கு வரவில்லை.",
+    'oyata kohomada': "நீங்கள் எப்படி இருக்கிறீர்கள்?",
+    'how are you': "நீங்கள் எப்படி இருக்கிறீர்கள்?",
+    'how are you?': "நீங்கள் எப்படி இருக்கிறீர்கள்?",
+    'mama gedara yanawa': "நான் வீட்டிற்கு போகிறேன்.",
+    'i am going home': "நான் வீட்டிற்கு போகிறேன்.",
+    'ada class thiyenawada': "இன்று வகுப்பு உள்ளதா?",
+    'mama heta ennam': "நான் நாளை வருகிறேன்.",
+    'i will come tomorrow': "நான் நாளை வருகிறேன்.",
+    'hari mama ennam': "சரி, நான் வருகிறேன்.",
+    'mokakda karanne': "என்ன செய்கிறீர்கள்?",
+    'what are you doing': "என்ன செய்கிறீர்கள்?",
+    'koheda yanne': "எங்கே போகிறீர்கள்?",
+    'where are you going': "எங்கே போகிறீர்கள்?",
+    'ikmanata enna': "சீக்கிரம் வாருங்கள்.",
+    'come quickly': "சீக்கிரம் வாருங்கள்.",
+    'subha udasanak': "காலை வணக்கம்.",
+    'good morning': "காலை வணக்கம்.",
+    'subha rathriyak': "இனிய இரவு.",
+    'good night': "இனிய இரவு.",
+    'bohoma sthuthi': "மிக்க நன்றி.",
+    'sthuthi': "நன்றி.",
+    'thank you': "நன்றி.",
+    'thank you very much': "மிக்க நன்றி.",
+    'elakiri kollo': "சூப்பர் நண்பா!",
+  };
+
   @override
   Future<TranslationResult> translate({
     required String text,
@@ -61,6 +90,7 @@ class SinglishLocalProvider implements TranslationProvider {
     final lowerTrimmed = text.trim().toLowerCase().replaceAll(RegExp(r'[.!?]+$'), '');
     String sinhalaResult = '';
     String englishResult = '';
+    String tamilResult = '';
 
     // 1. Direct phrase check
     if (_phraseToEnglish.containsKey(lowerTrimmed)) {
@@ -68,6 +98,9 @@ class SinglishLocalProvider implements TranslationProvider {
     }
     if (_englishToSinhala.containsKey(lowerTrimmed)) {
       sinhalaResult = _englishToSinhala[lowerTrimmed]!;
+    }
+    if (_phraseToTamil.containsKey(lowerTrimmed)) {
+      tamilResult = _phraseToTamil[lowerTrimmed]!;
     }
 
     // 2. Perform transliteration if Sinhala result is not yet resolved
@@ -84,14 +117,31 @@ class SinglishLocalProvider implements TranslationProvider {
       if (detectedLanguage == LanguageType.english) {
         englishResult = text;
       } else {
-        // Approximate meaningful conversion for common patterns
         englishResult = _approximateEnglishFromSinglish(lowerTrimmed);
+      }
+    }
+
+    // 4. Fallback for Tamil translation
+    if (tamilResult.isEmpty) {
+      if (lowerTrimmed.contains('kohomada')) {
+        tamilResult = "எப்படி இருக்கிறீர்கள்?";
+      } else if (lowerTrimmed.contains('yanawa')) {
+        tamilResult = "போகிறேன்.";
+      } else if (lowerTrimmed.contains('ennam') || lowerTrimmed.contains('enawa')) {
+        tamilResult = "வருகிறேன்.";
+      } else if (lowerTrimmed.contains('enne na') || lowerTrimmed.contains('enne naha')) {
+        tamilResult = "வரமாட்டேன்.";
+      } else if (lowerTrimmed.contains('sthuthi')) {
+        tamilResult = "நன்றி.";
+      } else {
+        tamilResult = englishResult; // Graceful fallback
       }
     }
 
     return TranslationResult(
       sinhala: sinhalaResult,
       english: englishResult,
+      tamil: tamilResult,
       providerName: name,
     );
   }

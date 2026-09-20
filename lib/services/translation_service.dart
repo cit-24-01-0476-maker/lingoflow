@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import '../models/models.dart';
@@ -189,7 +189,9 @@ class TranslationFeedNotifier extends StateNotifier<List<TranslationMessage>> {
 
     // Show native translated Android notification
     if (settings.translatedNotifications) {
-      final primary = mode == TranslationMode.autoEnglish ? item.translatedEnglish : item.translatedSinhala;
+      final primary = settings.targetLanguage == 'tamil'
+          ? (translation.tamil.isNotEmpty ? translation.tamil : item.translatedSinhala)
+          : (mode == TranslationMode.autoEnglish ? item.translatedEnglish : item.translatedSinhala);
       final secondary = mode == TranslationMode.dual ? item.translatedEnglish : null;
 
       await NativeBridgeService.showTranslatedNotification(
@@ -205,9 +207,11 @@ class TranslationFeedNotifier extends StateNotifier<List<TranslationMessage>> {
     if (settings.isFloatingBubbleEnabled) {
       final floatingTranslation = settings.targetLanguage == 'english'
           ? (item.translatedEnglish.isNotEmpty ? item.translatedEnglish : item.translatedSinhala)
-          : (settings.targetLanguage == 'dual'
-              ? '${item.translatedSinhala}\n(${item.translatedEnglish})'
-              : (item.translatedSinhala.isNotEmpty ? item.translatedSinhala : item.translatedEnglish));
+          : (settings.targetLanguage == 'tamil'
+              ? (translation.tamil.isNotEmpty ? translation.tamil : item.translatedSinhala)
+              : (settings.targetLanguage == 'dual'
+                  ? '${item.translatedSinhala}\n(${item.translatedEnglish})'
+                  : (item.translatedSinhala.isNotEmpty ? item.translatedSinhala : item.translatedEnglish)));
 
       await NativeBridgeService.showFloatingMessage(
         sender: sender,

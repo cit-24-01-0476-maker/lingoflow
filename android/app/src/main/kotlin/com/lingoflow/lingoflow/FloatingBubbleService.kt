@@ -280,11 +280,12 @@ class FloatingBubbleService : Service() {
         } else {
             currentLanguage = when (currentLanguage) {
                 "sinhala" -> "english"
-                "english" -> "dual"
+                "english" -> "tamil"
+                "tamil" -> "dual"
                 else -> "sinhala"
             }
             updateBadge()
-            displayMessagePopup("LingoFlow", "Language set to: ${currentLanguage.uppercase()}", "Tap WhatsApp chat to translate")
+            displayMessagePopup("SinglishGo", "Language set to: ${currentLanguage.uppercase()}", "Tap WhatsApp chat to translate")
         }
     }
 
@@ -305,13 +306,15 @@ class FloatingBubbleService : Service() {
     private fun updateBadge() {
         bubbleBadge?.text = when (currentLanguage) {
             "english" -> "EN"
+            "tamil" -> "தமிழ்"
             "dual" -> "ALL"
             else -> "සිං"
         }
         val badgeColor = when (currentLanguage) {
             "english" -> Color.parseColor("#06B6D4")
+            "tamil" -> Color.parseColor("#EC4899")
             "dual" -> Color.parseColor("#8B5CF6")
-            else -> Color.parseColor("#F59E0B")
+            else -> Color.parseColor("#10B981")
         }
         (bubbleBadge?.background as? GradientDrawable)?.setColor(badgeColor)
     }

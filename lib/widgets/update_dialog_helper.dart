@@ -152,7 +152,7 @@ class _LiveUpdateDialogState extends State<LiveUpdateDialog> {
             ),
             SizedBox(width: 12),
             Text(
-              'Updating LingoFlow...',
+              'Updating SinglishGo...',
               style: TextStyle(color: AppColors.textPrimaryDark, fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ],
@@ -197,7 +197,7 @@ class _LiveUpdateDialogState extends State<LiveUpdateDialog> {
                 border: Border.all(color: AppColors.primaryBlue.withOpacity(0.4)),
               ),
               child: Text(
-                'LingoFlow v${widget.info.versionName} • ${widget.info.apkSizeMb.toStringAsFixed(1)} MB',
+                'SinglishGo v${widget.info.versionName} • ${widget.info.apkSizeMb.toStringAsFixed(1)} MB',
                 style: const TextStyle(
                   color: AppColors.primaryAccent,
                   fontSize: 13,

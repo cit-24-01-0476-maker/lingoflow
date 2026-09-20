@@ -68,7 +68,7 @@ class AutoUpdateService {
     try {
       final cacheDir = await NativeBridgeService.getAppCacheDir();
       if (cacheDir.isEmpty) return null;
-      final targetFile = File('$cacheDir/lingoflow_update.apk');
+      final targetFile = File('$cacheDir/singlishgo_update.apk');
       if (await targetFile.exists()) {
         try {
           await targetFile.delete();
