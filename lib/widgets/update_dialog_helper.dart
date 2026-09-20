@@ -160,7 +160,7 @@ class _LiveUpdateDialogState extends State<LiveUpdateDialog> {
       case UpdateState.readyToInstall:
         return Row(
           children: const [
-            Icon(Icons.check_circle_rounded, color: AppColors.statusActive, size: 24),
+            Icon(Icons.check_circle_rounded, color: AppColors.accentGreen, size: 24),
             SizedBox(width: 10),
             Text(
               'Ready to Install!',
@@ -293,18 +293,18 @@ class _LiveUpdateDialogState extends State<LiveUpdateDialog> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: AppColors.statusActive.withOpacity(0.12),
+                color: AppColors.accentGreen.withOpacity(0.12),
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.statusActive.withOpacity(0.3)),
+                border: Border.all(color: AppColors.accentGreen.withOpacity(0.3)),
               ),
               child: Row(
                 children: const [
-                  Icon(Icons.security_rounded, color: AppColors.statusActive, size: 20),
+                  Icon(Icons.security_rounded, color: AppColors.accentGreen, size: 20),
                   SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Safe & verified APK package from official repository.',
-                      style: TextStyle(color: AppColors.statusActive, fontSize: 12),
+                      style: TextStyle(color: AppColors.accentGreen, fontSize: 12),
                     ),
                   ),
                 ],
@@ -377,7 +377,7 @@ class _LiveUpdateDialogState extends State<LiveUpdateDialog> {
             icon: const Icon(Icons.install_mobile_rounded, color: Colors.white, size: 18),
             label: const Text('Open Installer', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.statusActive,
+              backgroundColor: AppColors.accentGreen,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () {
